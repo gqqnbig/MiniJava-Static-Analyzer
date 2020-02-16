@@ -1,3 +1,4 @@
+import baseVisitors.StatementStartVisitor;
 import syntaxtree.*;
 
 public class Location
@@ -35,6 +36,11 @@ public class Location
 
 	public Location(Statement statement)
 	{
+		StatementStartVisitor statementStartVisitor = new StatementStartVisitor();
+		statement.accept(statementStartVisitor);
+
+		line = statementStartVisitor.line;
+		column = statementStartVisitor.column;
 	}
 
 	public Location(NodeToken returnStatement)

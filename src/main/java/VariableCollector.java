@@ -14,10 +14,14 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 {
 	ArrayList<FlowSensitiveVariable> variables = new ArrayList<>();
 
+	List<NullableIdentifierDefinition> nullablesInScope;
+
 	@Override
 	public void visitScope(MainClass n, Location argu)
 	{
 		n.f14.accept(this, null);
+
+		nullablesInScope = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
 		n.f15.accept(this, null);
 	}
 
@@ -25,9 +29,18 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	public void visitScope(MethodDeclaration n, Location argu)
 	{
 		n.f7.accept(this, null);
+
+		nullablesInScope = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
 		n.f8.accept(this, null);
 
 		//return statement
+		Location returnLocation = new Location(n.f9);
+		for (NullableIdentifierDefinition nullable : nullablesInScope)
+		{
+			variables.add(new VariableIn(nullable, returnLocation));
+			variables.add(new VariableOut(nullable, returnLocation));
+		}
+
 		n.f10.accept(this, new Location(n.f9));
 	}
 
@@ -61,15 +74,16 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visit(Statement n, Location argu)
 	{
-		List<NullableIdentifierDefinition> nullables = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
+//		List<NullableIdentifierDefinition> nullables = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
 
-		for (NullableIdentifierDefinition nullable : nullables)
+		Location location = new Location(n);
+		for (NullableIdentifierDefinition nullable : nullablesInScope)
 		{
-			variables.add(new VariableIn(nullable, argu));
-			variables.add(new VariableOut(nullable, argu));
+			variables.add(new VariableIn(nullable, location));
+			variables.add(new VariableOut(nullable, location));
 		}
 
-		super.visit(n, new Location(n));
+		super.visit(n, location);
 	}
 
 	@Override

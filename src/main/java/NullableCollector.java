@@ -3,6 +3,7 @@ import syntaxtree.*;
 import utils.Scope;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class NullableCollector extends ScopeVisitor<Object>
@@ -28,13 +29,38 @@ public class NullableCollector extends ScopeVisitor<Object>
 
 	static ArrayList<NullableIdentifierDefinition> nullables = new ArrayList<>();
 
+	/*
+	map from subclass to its superclass
+	 */
+	static HashMap<String, String> superClassHierarchy = new HashMap<>();
+
+	private static List<NullableIdentifierDefinition> getNullableFieldsDefinedInClass(String className)
+	{
+		List<NullableIdentifierDefinition> scopeNullables = new ArrayList<>();
+		for (NullableIdentifierDefinition entry : nullables)
+		{
+			if (entry.Class.equals(className) && entry.Method == null)
+				scopeNullables.add(entry);
+		}
+		return scopeNullables;
+	}
+
 	public static List<NullableIdentifierDefinition> getNullableIdentifierInScope(Scope scope)
 	{
 		List<NullableIdentifierDefinition> scopeNullables = new ArrayList<>();
 		for (NullableIdentifierDefinition entry : nullables)
 		{
-			if(entry.Class.equals(scope.Class) && entry.Method.equals(scope.Method))
+			if (entry.Class.equals(scope.Class) &&
+					(entry.Method == null || entry.Method.equals(scope.Method))) //fields are available in a method.
 				scopeNullables.add(entry);
+
+			String className = superClassHierarchy.get(scope.Class);
+			while (className != null)
+			{
+				scopeNullables.addAll(getNullableFieldsDefinedInClass(className));
+				className = superClassHierarchy.get(className);
+			}
+
 		}
 		return scopeNullables;
 	}
@@ -74,12 +100,16 @@ public class NullableCollector extends ScopeVisitor<Object>
 	public Object visitScope(ClassDeclaration n)
 	{
 		n.f3.accept(this);
+		n.f4.accept(this);
 		return null;
 	}
 
 	@Override
 	protected Object visitScope(ClassExtendsDeclaration n)
 	{
+		superClassHierarchy.put(n.f1.f0.toString(), n.f3.f0.toString());
+		n.f5.accept(this);
+		n.f6.accept(this);
 		return null;
 	}
 
