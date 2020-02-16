@@ -19,7 +19,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visitScope(MainClass n, Location argu)
 	{
-		nullablesInScope = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
+		nullablesInScope = NullableCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 		isFirstStatement = true;
 		n.f15.accept(this, null);
 
@@ -32,7 +32,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	{
 //		n.f7.accept(this, null);
 
-		nullablesInScope = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
+		nullablesInScope = NullableCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 		isFirstStatement = true;
 		n.f8.accept(this, null);
 		assert n.f8.present() == false || isFirstStatement == false : "If method body has statements, isFirstStatement must already be turned off.";
@@ -112,6 +112,20 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			r.right = new VariableOut(nullable, argu);
 			constraints.add(r);
 		}
+	}
+
+	@Override
+	public void visit(AssignmentStatement n, Location argu)
+	{
+		VariableOut vOut = new VariableOut(NullableCollector.getDefinition(n.f0, new Scope(getClassName(), getMethodName())), argu);
+		VariableRes vRes = new VariableRes(n.f2, argu);
+
+		EqualityRelationship r = new EqualityRelationship();
+		r.left = vOut;
+		r.right = vRes;
+		constraints.add(r);
+
+		n.f2.accept(this, argu);
 	}
 
 	//	@Override

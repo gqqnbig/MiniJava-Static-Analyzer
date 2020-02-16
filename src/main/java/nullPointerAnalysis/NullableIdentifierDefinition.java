@@ -9,6 +9,11 @@ public class NullableIdentifierDefinition
 	public String Method;
 	public boolean IsParameter;
 
+	public String getIdentifier()
+	{
+		return identifier;
+	}
+
 	public NullableIdentifierDefinition(Identifier identifier, String className, String methodName, boolean isParameter)
 	{
 

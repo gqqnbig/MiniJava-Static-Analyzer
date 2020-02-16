@@ -3,6 +3,8 @@ package utils;
 import baseVisitors.StatementStartVisitor;
 import syntaxtree.*;
 
+import java.util.Objects;
+
 public class Location
 {
 
@@ -67,5 +69,21 @@ public class Location
 	public String toString()
 	{
 		return String.format("L%dC%d", line, column);
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Location location = (Location) o;
+		return line == location.line &&
+				column == location.column;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(line, column);
 	}
 }

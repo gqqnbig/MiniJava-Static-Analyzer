@@ -26,7 +26,7 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	{
 //		n.f14.accept(this, null);
 
-		nullablesInScope = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
+		nullablesInScope = NullableCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 		n.f15.accept(this, null);
 	}
 
@@ -35,7 +35,7 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	{
 //		n.f7.accept(this, null);
 
-		nullablesInScope = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
+		nullablesInScope = NullableCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 		n.f8.accept(this, null);
 
 		//return statement

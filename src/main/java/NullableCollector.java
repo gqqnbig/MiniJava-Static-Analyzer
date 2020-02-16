@@ -46,7 +46,7 @@ public class NullableCollector extends ScopeVisitor<Object>
 		return scopeNullables;
 	}
 
-	public static List<NullableIdentifierDefinition> getNullableIdentifierInScope(Scope scope)
+	public static List<NullableIdentifierDefinition> getNullableIdentifiersInScope(Scope scope)
 	{
 		List<NullableIdentifierDefinition> scopeNullables = new ArrayList<>();
 		for (NullableIdentifierDefinition entry : nullables)
@@ -64,6 +64,33 @@ public class NullableCollector extends ScopeVisitor<Object>
 		}
 
 		return scopeNullables;
+	}
+
+	/**
+	 * Get definition of a nullable identifier from the identifier usage.
+	 * <p>
+	 * If the identifier is not nullable, eg. int, return null.
+	 *
+	 * @param identifier
+	 * @return
+	 */
+	public static NullableIdentifierDefinition getDefinition(Identifier identifier, Scope scope)
+	{
+		NullableIdentifierDefinition fieldDefinition = null;
+		for (var d : getNullableIdentifiersInScope(scope))
+		{
+			if (d.getIdentifier().equals(identifier.f0.toString()))
+			{
+				if (d.Method == null)
+				{
+					assert fieldDefinition == null;
+					fieldDefinition = d;
+				}
+				else
+					return d;
+			}
+		}
+		return fieldDefinition;
 	}
 
 //	public static List<NullableIdentifier> getNullableIdentifierInScope(Scope scope)
