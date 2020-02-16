@@ -1,3 +1,4 @@
+import nullPointerAnalysis.EqualityRelationship;
 import syntaxtree.*;
 import utils.FlowSensitiveVariable;
 
@@ -36,10 +37,18 @@ public class NullCheck
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 
+		debugOut.println("\nVariables:");
 		for (FlowSensitiveVariable variable : variableCollector.variables)
 		{
 			debugOut.println(variable);
 		}
 
+		ConstraintCollector constraintCollector = new ConstraintCollector();
+		goal.accept(constraintCollector, null);
+		debugOut.println("\nConstraints:");
+		for (EqualityRelationship r : constraintCollector.constraints)
+		{
+			debugOut.println(r);
+		}
 	}
 }

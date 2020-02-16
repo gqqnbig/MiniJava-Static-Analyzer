@@ -18,6 +18,6 @@ public class VariablesTest
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 
-		Assert.assertEquals(23, variableCollector.variables.size());
+		Assert.assertEquals(21, variableCollector.variables.size());
 	}
 }

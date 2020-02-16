@@ -1,8 +1,11 @@
 import baseVisitors.VoidScopeVisitor;
+import nullPointerAnalysis.VariableIn;
+import nullPointerAnalysis.VariableOut;
+import nullPointerAnalysis.VariableRes;
 import syntaxtree.*;
 import utils.FlowSensitiveVariable;
 import utils.Location;
-import utils.NullableIdentifierDefinition;
+import nullPointerAnalysis.NullableIdentifierDefinition;
 import utils.Scope;
 
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visitScope(MainClass n, Location argu)
 	{
-		n.f14.accept(this, null);
+//		n.f14.accept(this, null);
 
 		nullablesInScope = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
 		n.f15.accept(this, null);
@@ -30,7 +33,7 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visitScope(MethodDeclaration n, Location argu)
 	{
-		n.f7.accept(this, null);
+//		n.f7.accept(this, null);
 
 		nullablesInScope = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
 		n.f8.accept(this, null);
@@ -58,20 +61,20 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 		n.f6.accept(this, null);
 	}
 
-	@Override
-	public void visit(VarDeclaration n, Location argu)
-	{
-		if (NullableCollector.isNullable(n.f0) == false)
-			return;
-
-//		assert NullableCollector.nullables.containsKey(n.f1);
-
-		VariableIn vIn = new VariableIn(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
-		variables.add(vIn);
-
-		VariableOut vOut = new VariableOut(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
-		variables.add(vOut);
-	}
+//	@Override
+//	public void visit(VarDeclaration n, Location argu)
+//	{
+//		if (NullableCollector.isNullable(n.f0) == false)
+//			return;
+//
+////		assert NullableCollector.nullables.containsKey(n.f1);
+//
+//		VariableIn vIn = new VariableIn(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
+//		variables.add(vIn);
+//
+//		VariableOut vOut = new VariableOut(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
+//		variables.add(vOut);
+//	}
 
 	@Override
 	public void visit(Statement n, Location argu)

@@ -1,9 +1,10 @@
+package nullPointerAnalysis;
+
 import utils.FlowSensitiveVariable;
 import utils.Location;
-import utils.NullableIdentifierDefinition;
-import utils.Variable;
+import math.Variable;
 
-public abstract class FlowSensitiveNullPointerAnalysisVariable implements Variable<NullableIdentifierDefinition>, FlowSensitiveVariable<NullableIdentifierDefinition>
+public abstract class FlowSensitiveNullPointerAnalysisVariable implements Variable<NullableIdentifierDefinition, Domain>, FlowSensitiveVariable<NullableIdentifierDefinition, Domain>
 {
 	protected Location statement;
 	NullableIdentifierDefinition input;

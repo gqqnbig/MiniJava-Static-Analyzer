@@ -1,10 +1,12 @@
+package nullPointerAnalysis;
+
 import baseVisitors.ExpressionToStringVisitor;
 import syntaxtree.Expression;
 import syntaxtree.PrimaryExpression;
 import utils.FlowSensitiveVariable;
 import utils.Location;
 
-public class VariableRes implements FlowSensitiveVariable<Expression>
+public class VariableRes implements FlowSensitiveVariable<Expression, Domain>
 {
 	private Expression expression;
 	private Location statement;
