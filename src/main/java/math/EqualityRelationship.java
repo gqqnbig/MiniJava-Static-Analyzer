@@ -1,7 +1,7 @@
 package math;
 
-public class EqualityRelationship<TInput, TOutput>
+public class EqualityRelationship<TDomain>
 {
-	public Variable<TInput, TOutput> left;
-	public Literal<TOutput> right;
+	public TDomain left;
+	public TDomain right;
 }

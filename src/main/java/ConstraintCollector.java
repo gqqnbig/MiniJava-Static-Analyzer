@@ -102,7 +102,19 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		super.visit(n, location);
 	}
 
-//	@Override
+	@Override
+	public void visit(PrintStatement n, Location argu)
+	{
+		for (NullableIdentifierDefinition nullable : nullablesInScope)
+		{
+			EqualityRelationship r = new EqualityRelationship();
+			r.left = new VariableOut(nullable, argu);
+			r.right = new VariableOut(nullable, argu);
+			constraints.add(r);
+		}
+	}
+
+	//	@Override
 //	public void visit(Expression n, Location argu)
 //	{
 //		assert argu != null;

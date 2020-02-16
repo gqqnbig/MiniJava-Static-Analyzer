@@ -4,7 +4,7 @@ import utils.FlowSensitiveVariable;
 import utils.Location;
 import math.Variable;
 
-public abstract class FlowSensitiveNullPointerAnalysisVariable implements Variable<NullableIdentifierDefinition, Domain>, FlowSensitiveVariable<NullableIdentifierDefinition, Domain>
+public abstract class FlowSensitiveNullPointerAnalysisVariable implements Variable<NullableIdentifierDefinition, AnalysisResult>, FlowSensitiveVariable<NullableIdentifierDefinition, AnalysisResult>, AnalysisResult
 {
 	protected Location statement;
 	NullableIdentifierDefinition input;

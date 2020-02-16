@@ -1,6 +1,6 @@
 package math;
 
-public interface Variable<TInput, TOutput>
+public interface Variable<TInput, TOutput extends Domain> extends Domain
 {
 	String getFunctionName();
 

@@ -6,7 +6,7 @@ import syntaxtree.PrimaryExpression;
 import utils.FlowSensitiveVariable;
 import utils.Location;
 
-public class VariableRes implements FlowSensitiveVariable<Expression, Domain>
+public class VariableRes implements FlowSensitiveVariable<Expression, AnalysisResult>
 {
 	private Expression expression;
 	private Location statement;

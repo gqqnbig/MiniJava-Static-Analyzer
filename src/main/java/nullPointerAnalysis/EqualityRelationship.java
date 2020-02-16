@@ -1,6 +1,6 @@
 package nullPointerAnalysis;
 
-public class EqualityRelationship extends math.EqualityRelationship<NullableIdentifierDefinition, Domain>
+public class EqualityRelationship extends math.EqualityRelationship<AnalysisResult>
 {
 	@Override
 	public String toString()

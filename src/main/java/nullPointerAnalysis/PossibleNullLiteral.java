@@ -2,7 +2,7 @@ package nullPointerAnalysis;
 
 import math.Literal;
 
-public class PossibleNullLiteral implements Literal<Domain>
+public class PossibleNullLiteral implements Literal<AnalysisResult>, AnalysisResult
 {
 	@Override
 	public String toString()
