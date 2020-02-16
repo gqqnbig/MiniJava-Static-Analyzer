@@ -1,14 +1,26 @@
+import baseVisitors.ExpressionToStringVisitor;
 import syntaxtree.Expression;
 import syntaxtree.Identifier;
+import syntaxtree.PrimaryExpression;
 
 public class VariableRes implements FlowSensitiveVariable<Expression>
 {
-	private final Expression expression;
+	private Expression expression;
 	private Location statement;
+
+	private String expressionStr;
 
 	public VariableRes(Expression expression, Location statement)
 	{
-		this.expression = expression;
+//		this.expression = expression;
+
+		expressionStr = expression.accept(new ExpressionToStringVisitor(), null) + "@" + Integer.toHexString(expression.hashCode());
+		this.statement = statement;
+	}
+
+	public VariableRes(PrimaryExpression expression, Location statement)
+	{
+		expressionStr = expression.accept(new ExpressionToStringVisitor(), null) + "@" + Integer.toHexString(expression.hashCode());
 		this.statement = statement;
 	}
 
@@ -22,7 +34,7 @@ public class VariableRes implements FlowSensitiveVariable<Expression>
 	@Override
 	public String toString()
 	{
-		return String.format("res[%s, %s]", expression, statement);
+		return String.format("res[%s, %s]", expressionStr, statement);
 	}
 
 	@Override

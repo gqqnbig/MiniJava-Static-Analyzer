@@ -53,15 +53,15 @@ public class NullableCollector extends ScopeVisitor<Object>
 			if (entry.Class.equals(scope.Class) &&
 					(entry.Method == null || entry.Method.equals(scope.Method))) //fields are available in a method.
 				scopeNullables.add(entry);
-
-			String className = superClassHierarchy.get(scope.Class);
-			while (className != null)
-			{
-				scopeNullables.addAll(getNullableFieldsDefinedInClass(className));
-				className = superClassHierarchy.get(className);
-			}
-
 		}
+
+		String className = superClassHierarchy.get(scope.Class);
+		while (className != null)
+		{
+			scopeNullables.addAll(getNullableFieldsDefinedInClass(className));
+			className = superClassHierarchy.get(className);
+		}
+
 		return scopeNullables;
 	}
 

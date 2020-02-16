@@ -96,4 +96,17 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 
 		super.visit(n, argu);
 	}
+
+	@Override
+	public void visit(PrimaryExpression n, Location argu)
+	{
+		if (n.f0.choice instanceof Identifier)
+			variables.add(new VariableRes(n, argu));
+		else if (n.f0.choice instanceof NotExpression)
+			variables.add(new VariableRes(n, argu));
+		else if (n.f0.choice instanceof BracketExpression)
+			variables.add(new VariableRes(n, argu));
+
+		super.visit(n, argu);
+	}
 }
