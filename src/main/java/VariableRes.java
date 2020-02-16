@@ -1,7 +1,8 @@
 import baseVisitors.ExpressionToStringVisitor;
 import syntaxtree.Expression;
-import syntaxtree.Identifier;
 import syntaxtree.PrimaryExpression;
+import utils.FlowSensitiveVariable;
+import utils.Location;
 
 public class VariableRes implements FlowSensitiveVariable<Expression>
 {

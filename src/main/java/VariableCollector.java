@@ -1,7 +1,9 @@
 import baseVisitors.VoidScopeVisitor;
 import syntaxtree.*;
+import utils.FlowSensitiveVariable;
+import utils.Location;
+import utils.NullableIdentifierDefinition;
 import utils.Scope;
-import visitor.GJVoidDepthFirst;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +76,7 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visit(Statement n, Location argu)
 	{
-//		List<NullableIdentifierDefinition> nullables = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
+//		List<utils.NullableIdentifierDefinition> nullables = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
 
 		Location location = new Location(n);
 		for (NullableIdentifierDefinition nullable : nullablesInScope)

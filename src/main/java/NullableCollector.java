@@ -1,5 +1,6 @@
 import baseVisitors.ScopeVisitor;
 import syntaxtree.*;
+import utils.NullableIdentifierDefinition;
 import utils.Scope;
 
 import java.util.ArrayList;

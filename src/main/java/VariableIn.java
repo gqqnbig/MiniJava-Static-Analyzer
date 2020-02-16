@@ -1,3 +1,6 @@
+import utils.Location;
+import utils.NullableIdentifierDefinition;
+
 public class VariableIn extends FlowSensitiveNullPointerAnalysisVariable
 {
 

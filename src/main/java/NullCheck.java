@@ -1,4 +1,5 @@
 import syntaxtree.*;
+import utils.FlowSensitiveVariable;
 
 import java.io.OutputStream;
 import java.io.PrintStream;

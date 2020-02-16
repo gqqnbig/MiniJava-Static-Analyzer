@@ -1,4 +1,5 @@
-import syntaxtree.Identifier;
+import utils.Location;
+import utils.NullableIdentifierDefinition;
 
 public class VariableOut extends FlowSensitiveNullPointerAnalysisVariable
 {
