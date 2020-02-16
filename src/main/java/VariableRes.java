@@ -1,7 +1,7 @@
 import syntaxtree.Expression;
 import syntaxtree.Identifier;
 
-public class VariableRes implements FlowSensitiveVariable
+public class VariableRes implements FlowSensitiveVariable<Expression>
 {
 	private final Expression expression;
 	private Location statement;
@@ -19,14 +19,21 @@ public class VariableRes implements FlowSensitiveVariable
 		return statement;
 	}
 
-	public Expression getExpression()
-	{
-		return expression;
-	}
-
 	@Override
 	public String toString()
 	{
 		return String.format("res[%s, %s]", expression, statement);
+	}
+
+	@Override
+	public String getFunctionName()
+	{
+		return "res";
+	}
+
+	@Override
+	public Expression getInput()
+	{
+		return expression;
 	}
 }

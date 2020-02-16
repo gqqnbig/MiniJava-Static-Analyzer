@@ -1,10 +1,9 @@
 import baseVisitors.ScopeVisitor;
 import syntaxtree.*;
-import utils.NodeCapture;
 import utils.Scope;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
 public class NullableCollector extends ScopeVisitor<Object>
 {
@@ -25,7 +24,31 @@ public class NullableCollector extends ScopeVisitor<Object>
 	}
 
 
-	static ArrayList<NodeCapture<Identifier>> nullables = new ArrayList<>();
+//	static HashMap<NullableIdentifier, Scope> nullables = new HashMap<>();
+
+	static ArrayList<NullableIdentifierDefinition> nullables = new ArrayList<>();
+
+	public static List<NullableIdentifierDefinition> getNullableIdentifierInScope(Scope scope)
+	{
+		List<NullableIdentifierDefinition> scopeNullables = new ArrayList<>();
+		for (NullableIdentifierDefinition entry : nullables)
+		{
+			if(entry.Class.equals(scope.Class) && entry.Method.equals(scope.Method))
+				scopeNullables.add(entry);
+		}
+		return scopeNullables;
+	}
+
+//	public static List<NullableIdentifier> getNullableIdentifierInScope(Scope scope)
+//	{
+//		List<NullableIdentifier> scopeNullables = new ArrayList<>();
+//		for (HashMap.Entry<NullableIdentifier, Scope> entry : nullables.entrySet())
+//		{
+//			if (entry.getValue().equals(scope))
+//				scopeNullables.add(entry.getKey());
+//		}
+//		return scopeNullables;
+//	}
 //
 //	static HashMap<Identifier, Scope> nullables = new HashMap<>();
 
@@ -65,7 +88,8 @@ public class NullableCollector extends ScopeVisitor<Object>
 	{
 		if (isNullable(n.f0))
 		{
-			nullables.add(new NodeCapture<>(n.f1, new Scope(getClassName(), getMethodName())));
+//			nullables.put(new NullableIdentifier(n.f1), new Scope(getClassName(), getMethodName()));
+			nullables.add(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false));
 		}
 		return null;
 	}
@@ -75,7 +99,8 @@ public class NullableCollector extends ScopeVisitor<Object>
 	{
 		if (isNullable(n.f0))
 		{
-			nullables.add(new NodeCapture<>(n.f1, new Scope(getClassName(), getMethodName())));
+//			nullables.put(new NullableIdentifier(n.f1), new Scope(getClassName(), getMethodName()));
+			nullables.add(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), true));
 		}
 		return null;
 	}

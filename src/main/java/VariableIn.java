@@ -1,31 +1,15 @@
-import syntaxtree.Identifier;
-
-public class VariableIn implements FlowSensitiveVariable
+public class VariableIn extends FlowSensitiveNullPointerAnalysisVariable
 {
-	private final Identifier identifier;
-	private Location statement;
 
-	public VariableIn(Identifier identifier, Location statement)
+	public VariableIn(NullableIdentifierDefinition input, Location statement)
 	{
-		this.identifier = identifier;
-		this.statement = statement;
+		super(input, statement);
 	}
 
 
 	@Override
-	public Location getStatement()
+	public String getFunctionName()
 	{
-		return statement;
-	}
-
-	public Identifier getIdentifier()
-	{
-		return identifier;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "in[" + identifier.f0.toString() + ", " + statement + "]";
+		return "in";
 	}
 }

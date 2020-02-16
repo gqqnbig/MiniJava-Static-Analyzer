@@ -1,4 +1,4 @@
-public interface FlowSensitiveVariable extends Variable
+public interface FlowSensitiveVariable<TInput> extends Variable<TInput>
 {
 	Location getStatement();
 }

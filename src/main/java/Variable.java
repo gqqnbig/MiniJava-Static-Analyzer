@@ -1,6 +1,6 @@
-public interface Variable<R>
+public interface Variable<TInput>
 {
-//	String getFunctionName();
-//
-//	R getInput();
+	String getFunctionName();
+
+	TInput getInput();
 }

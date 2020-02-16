@@ -1,31 +1,18 @@
 import syntaxtree.Identifier;
 
-public class VariableOut implements FlowSensitiveVariable
+public class VariableOut extends FlowSensitiveNullPointerAnalysisVariable
 {
-	private final Identifier identifier;
-	private Location statement;
 
-	public VariableOut(Identifier identifier, Location statement)
+	public VariableOut(NullableIdentifierDefinition input, Location statement)
 	{
-		this.identifier = identifier;
-		this.statement = statement;
+		super(input, statement);
 	}
 
 
 	@Override
-	public Location getStatement()
+	public String getFunctionName()
 	{
-		return statement;
+		return "out";
 	}
 
-	public Identifier getIdentifier()
-	{
-		return identifier;
-	}
-
-	@Override
-	public String toString()
-	{
-		return "out[" + identifier.f0.toString() + ", " + statement + "]";
-	}
 }
