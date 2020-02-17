@@ -1,5 +1,7 @@
 import nullPointerAnalysis.EqualityRelationship;
+import nullPointerAnalysis.ProgramStructureCollector;
 import syntaxtree.*;
+import typeAnalysis.ClassHierarchyAnalysis;
 import utils.FlowSensitiveVariable;
 
 import java.io.OutputStream;
@@ -19,7 +21,6 @@ public class NullCheck
 		});
 		if (args.length == 0 || Arrays.asList(args).contains("--debug") == false)
 		{
-
 			debugOut = nullOutputStream;
 		}
 		else
@@ -33,7 +34,9 @@ public class NullCheck
 		new MiniJavaParser(System.in);
 		Goal goal = MiniJavaParser.Goal();
 
-		NullableCollector.init(goal);
+		ProgramStructureCollector.init(goal);
+		ClassHierarchyAnalysis.init(goal);
+
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 

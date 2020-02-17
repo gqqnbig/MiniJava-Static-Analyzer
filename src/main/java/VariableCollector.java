@@ -1,11 +1,8 @@
 import baseVisitors.VoidScopeVisitor;
-import nullPointerAnalysis.VariableIn;
-import nullPointerAnalysis.VariableOut;
-import nullPointerAnalysis.VariableRes;
+import nullPointerAnalysis.*;
 import syntaxtree.*;
 import utils.FlowSensitiveVariable;
 import utils.Location;
-import nullPointerAnalysis.NullableIdentifierDefinition;
 import utils.Scope;
 
 import java.util.ArrayList;
@@ -26,7 +23,7 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	{
 //		n.f14.accept(this, null);
 
-		nullablesInScope = NullableCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
+		nullablesInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 		n.f15.accept(this, null);
 	}
 
@@ -35,7 +32,7 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	{
 //		n.f7.accept(this, null);
 
-		nullablesInScope = NullableCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
+		nullablesInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 		n.f8.accept(this, null);
 
 		//return statement

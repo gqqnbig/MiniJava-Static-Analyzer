@@ -1,9 +1,11 @@
 import math.Variable;
 import nullPointerAnalysis.EqualityRelationship;
+import nullPointerAnalysis.ProgramStructureCollector;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Assert;
 import org.junit.Test;
 import syntaxtree.Goal;
+import typeAnalysis.ClassHierarchyAnalysis;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -17,7 +19,8 @@ public class VariablesTest
 		new MiniJavaParser(stream);
 		Goal goal = MiniJavaParser.Goal();
 
-		NullableCollector.init(goal);
+		ProgramStructureCollector.init(goal);
+		ClassHierarchyAnalysis.init(goal);
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 

@@ -1,6 +1,7 @@
 import baseVisitors.VoidScopeVisitor;
 import nullPointerAnalysis.*;
 import syntaxtree.*;
+import typeAnalysis.ClassHierarchyAnalysis;
 import utils.Location;
 import nullPointerAnalysis.PossibleNullLiteral;
 import utils.Scope;
@@ -19,7 +20,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visitScope(MainClass n, Location argu)
 	{
-		nullablesInScope = NullableCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
+		nullablesInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 		isFirstStatement = true;
 		n.f15.accept(this, null);
 
@@ -32,7 +33,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	{
 //		n.f7.accept(this, null);
 
-		nullablesInScope = NullableCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
+		nullablesInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 		isFirstStatement = true;
 		n.f8.accept(this, null);
 		assert n.f8.present() == false || isFirstStatement == false : "If method body has statements, isFirstStatement must already be turned off.";
@@ -118,33 +119,59 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	public void visit(AssignmentStatement n, Location argu)
 	{
 		Scope scope = new Scope(getClassName(), getMethodName());
-		VariableOut vOut = new VariableOut(NullableCollector.getDefinition(n.f0, scope), argu);
+		VariableOut vOut = new VariableOut(ProgramStructureCollector.getDefinition(n.f0, scope), argu);
 		VariableRes vRes = new VariableRes(n.f2, argu);
 
-		constraints.add(new EqualityRelationship(vOut,vRes));
+		constraints.add(new EqualityRelationship(vOut, vRes));
 
 
+		NullableIdentifierDefinition assignee = ProgramStructureCollector.getDefinition(n.f0, scope);
 		if (n.f2.f0.choice instanceof MessageSend)
 		{
+			String methodName = ((MessageSend) n.f2.f0.choice).f2.f0.toString();
+			var possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName);
+			assert possibleTypes != null && possibleTypes.size() > 0;
 
+			for (var g : nullablesInScope)
+			{
+				if (g.equals(assignee))
+					continue;
+
+				EqualityRelationship r = new EqualityRelationship();
+				r.left = new VariableOut(g, argu);
+
+				Union union = new Union();
+				union.getInput().add(new VariableIn(g, argu));
+
+				for (String className : possibleTypes)
+				{
+					union.getInput().add(new VariableOut(g, getLastStatement(className, methodName)));
+				}
+				r.right = union;
+				constraints.add(r);
+			}
 		}
 		else
 		{
-			NullableIdentifierDefinition assignee = NullableCollector.getDefinition(n.f0, scope);
 			for (var g : nullablesInScope)
 			{
-				if(g.equals(assignee))
+				if (g.equals(assignee))
 					continue;
 
-				EqualityRelationship r=new EqualityRelationship();
-				r.left=new VariableOut(g,argu);
-				r.right=new VariableIn(g,argu);
+				EqualityRelationship r = new EqualityRelationship();
+				r.left = new VariableOut(g, argu);
+				r.right = new VariableIn(g, argu);
 				constraints.add(r);
 			}
 		}
 
 
 		n.f2.accept(this, argu);
+	}
+
+	private static Location getLastStatement(String className, String methodName)
+	{
+		return null;
 	}
 
 	//	@Override
