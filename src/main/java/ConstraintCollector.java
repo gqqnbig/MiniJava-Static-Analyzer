@@ -109,7 +109,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		{
 			EqualityRelationship r = new EqualityRelationship();
 			r.left = new VariableOut(nullable, argu);
-			r.right = new VariableOut(nullable, argu);
+			r.right = new VariableIn(nullable, argu);
 			constraints.add(r);
 		}
 	}
@@ -117,13 +117,32 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visit(AssignmentStatement n, Location argu)
 	{
-		VariableOut vOut = new VariableOut(NullableCollector.getDefinition(n.f0, new Scope(getClassName(), getMethodName())), argu);
+		Scope scope = new Scope(getClassName(), getMethodName());
+		VariableOut vOut = new VariableOut(NullableCollector.getDefinition(n.f0, scope), argu);
 		VariableRes vRes = new VariableRes(n.f2, argu);
 
-		EqualityRelationship r = new EqualityRelationship();
-		r.left = vOut;
-		r.right = vRes;
-		constraints.add(r);
+		constraints.add(new EqualityRelationship(vOut,vRes));
+
+
+		if (n.f2.f0.choice instanceof MessageSend)
+		{
+
+		}
+		else
+		{
+			NullableIdentifierDefinition assignee = NullableCollector.getDefinition(n.f0, scope);
+			for (var g : nullablesInScope)
+			{
+				if(g.equals(assignee))
+					continue;
+
+				EqualityRelationship r=new EqualityRelationship();
+				r.left=new VariableOut(g,argu);
+				r.right=new VariableIn(g,argu);
+				constraints.add(r);
+			}
+		}
+
 
 		n.f2.accept(this, argu);
 	}

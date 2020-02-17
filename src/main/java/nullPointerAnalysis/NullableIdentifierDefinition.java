@@ -14,6 +14,13 @@ public class NullableIdentifierDefinition
 		return identifier;
 	}
 
+	/**
+	 * Only NullableCollector should call this.
+	 * @param identifier
+	 * @param className
+	 * @param methodName
+	 * @param isParameter
+	 */
 	public NullableIdentifierDefinition(Identifier identifier, String className, String methodName, boolean isParameter)
 	{
 

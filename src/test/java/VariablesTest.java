@@ -33,6 +33,9 @@ public class VariablesTest
 			if (r.right instanceof Variable)
 				Assert.assertTrue(r.right + " is not a previously captured variable.", variableCollector.variables.contains(r.right));
 
+
+			Assert.assertTrue(r + " is invalid", r.left.equals(r.right) == false);
+
 		}
 	}
 }
