@@ -8,12 +8,12 @@ import java.util.*;
 public class ClassHierarchyAnalysis
 {
 	private static Goal goal;
-	private static HashMap<String, HashSet<String>> classMethodMapping;
+	private static HashMap<String, HashSet<Tuple<String, Integer>>> classMethodMapping;
 	public static HashMap<String, String> superClassHierarchy;
 	/**
 	 * given a method name, return the classes where the given method can be called.
 	 */
-	private static HashMap<String, HashSet<String>> methodAvailableInClassMapping;
+	private static HashMap<Tuple<String, Integer>, HashSet<String>> methodAvailableInClassMapping;
 
 	public static void init(Goal goal)
 	{
@@ -41,26 +41,26 @@ public class ClassHierarchyAnalysis
 	 * @param
 	 * @return
 	 */
-	public static Collection<String> getPossibleTypes(Identifier receiver, String methodName)
+	public static Collection<String> getPossibleTypes(Identifier receiver, String methodName, int parameterCount)
 	{
-		return methodAvailableInClassMapping.get(methodName);
+		return methodAvailableInClassMapping.get(new Tuple<>(methodName, parameterCount));
 	}
 
-	static HashMap<String, HashSet<String>> c2mTOm2c(HashMap<String, HashSet<String>> c2m)
+	static HashMap<Tuple<String, Integer>, HashSet<String>> c2mTOm2c(HashMap<String, HashSet<Tuple<String, Integer>>> c2m)
 	{
-		HashMap<String, HashSet<String>> m2c = new HashMap<String, HashSet<String>>();
+		HashMap<Tuple<String, Integer>, HashSet<String>> m2c = new HashMap<>();
 		for (String thisClass : c2m.keySet())
 		{
 			String searchingClass = thisClass;
 			while (searchingClass != null)
 			{
-				for (String method : c2m.get(searchingClass))
+				for (Tuple<String, Integer> methodInfo : c2m.get(searchingClass))
 				{
-					if (!m2c.containsKey(method))
+					if (!m2c.containsKey(methodInfo))
 					{
-						m2c.put(method, new HashSet<String>());
+						m2c.put(methodInfo, new HashSet<String>());
 					}
-					m2c.get(method).add(thisClass);
+					m2c.get(methodInfo).add(thisClass);
 				}
 				searchingClass = superClassHierarchy.get(searchingClass);
 			}
@@ -112,4 +112,32 @@ public class ClassHierarchyAnalysis
 //			}
 //		}
 //	}
+}
+
+class Tuple<T1, T2>
+{
+	public T1 item1;
+	public T2 item2;
+
+	public Tuple(T1 item1, T2 item2)
+	{
+		this.item1 = item1;
+		this.item2 = item2;
+	}
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Tuple<?, ?> tuple = (Tuple<?, ?>) o;
+		return Objects.equals(item1, tuple.item1) &&
+				Objects.equals(item2, tuple.item2);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(item1, item2);
+	}
 }

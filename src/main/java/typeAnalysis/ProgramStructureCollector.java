@@ -1,5 +1,6 @@
 package typeAnalysis;
 
+import baseVisitors.ParameterCollector;
 import baseVisitors.ScopeVisitor;
 import syntaxtree.ClassDeclaration;
 import syntaxtree.ClassExtendsDeclaration;
@@ -35,7 +36,7 @@ import java.util.HashSet;
  */
 public class ProgramStructureCollector extends ScopeVisitor<Object>
 {
-	protected static HashMap<String, HashSet<String>> classMethodMapping;
+	protected static HashMap<String, HashSet<Tuple<String, Integer>>> classMethodMapping;
 
 	/*
 	map from subclass to its superclass
@@ -50,7 +51,7 @@ public class ProgramStructureCollector extends ScopeVisitor<Object>
 
 	protected ProgramStructureCollector()
 	{
-		classMethodMapping = new HashMap<String, HashSet<String>>();
+		classMethodMapping = new HashMap<>();
 		superClassHierarchy = new HashMap<>();
 	}
 
@@ -58,8 +59,8 @@ public class ProgramStructureCollector extends ScopeVisitor<Object>
 	@Override
 	public Object visitScope(MainClass n)
 	{
-		HashSet<String> methods = new HashSet<>();
-		methods.add("main");
+		HashSet<Tuple<String, Integer>> methods = new HashSet<>();
+		methods.add(new Tuple<>("main", 1));
 		classMethodMapping.put(getClassName(), methods);
 
 		return null;
@@ -68,7 +69,9 @@ public class ProgramStructureCollector extends ScopeVisitor<Object>
 	@Override
 	public Object visitScope(MethodDeclaration n)
 	{
-		classMethodMapping.get(getClassName()).add(getMethodName());
+		ParameterCollector parameterCollector = new ParameterCollector();
+		n.f4.accept(parameterCollector);
+		classMethodMapping.get(getClassName()).add(new Tuple<>(getMethodName(), parameterCollector.parameterCount));
 		return null;
 	}
 

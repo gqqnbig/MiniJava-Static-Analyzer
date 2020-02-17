@@ -1,3 +1,4 @@
+import baseVisitors.ArgumentsCollector;
 import baseVisitors.VoidScopeVisitor;
 import nullPointerAnalysis.*;
 import syntaxtree.*;
@@ -7,6 +8,7 @@ import nullPointerAnalysis.PossibleNullLiteral;
 import utils.Scope;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class ConstraintCollector extends VoidScopeVisitor<Location>
@@ -116,14 +118,14 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	}
 
 	@Override
-	public void visit(AssignmentStatement n, Location argu)
+	public void visit(AssignmentStatement n, Location location)
 	{
 		Scope scope = new Scope(getClassName(), getMethodName());
 		NullableIdentifierDefinition assignee = ProgramStructureCollector.getDefinition(n.f0, scope);
-		if(assignee!=null)
+		if (assignee != null)
 		{
-			VariableOut vOut = new VariableOut(assignee, argu);
-			VariableRes vRes = new VariableRes(n.f2, argu);
+			VariableOut vOut = new VariableOut(assignee, location);
+			VariableRes vRes = new VariableRes(n.f2, location);
 
 			constraints.add(new EqualityRelationship(vOut, vRes));
 		}
@@ -131,23 +133,26 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		if (n.f2.f0.choice instanceof MessageSend)
 		{
 			String methodName = ((MessageSend) n.f2.f0.choice).f2.f0.toString();
-			var possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName);
+			ArgumentsCollector argumentsCollector = new ArgumentsCollector();
+			((MessageSend) (n.f2.f0.choice)).f4.accept(argumentsCollector);
+			ArrayList<Expression> arguments = argumentsCollector.arguments;
+			var possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName, arguments.size());
 			assert possibleTypes != null && possibleTypes.size() > 0;
 
-			for (var g : nullablesInScope)
+			getConstraint5(location, assignee, methodName, possibleTypes);
+
+
+			for (int i = 0; i < arguments.size(); i++)
 			{
-				if (g.equals(assignee))
-					continue;
-
+				Expression argument = arguments.get(i);
 				EqualityRelationship r = new EqualityRelationship();
-				r.left = new VariableOut(g, argu);
+				r.left = new VariableRes(argument, location);
 
-				Union union = new Union();
-				union.getInput().add(new VariableIn(g, argu));
-
-				for (String className : possibleTypes)
+				UnionFunction union = new UnionFunction();
+				for (var type : possibleTypes)
 				{
-					union.getInput().add(new VariableOut(g, ProgramStructureCollector.getLastStatement(className, methodName)));
+					VariableIn vIn = new VariableIn(ProgramStructureCollector.getParameter(type, methodName, i), ProgramStructureCollector.getFirstStatement(type, methodName));
+					union.getInput().add(vIn);
 				}
 				r.right = union;
 				constraints.add(r);
@@ -161,14 +166,45 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 					continue;
 
 				EqualityRelationship r = new EqualityRelationship();
-				r.left = new VariableOut(g, argu);
-				r.right = new VariableIn(g, argu);
+				r.left = new VariableOut(g, location);
+				r.right = new VariableIn(g, location);
 				constraints.add(r);
 			}
 		}
 
 
-		n.f2.accept(this, argu);
+		n.f2.accept(this, location);
+	}
+
+	/**
+	 * For an assignment statement x = e, where e is a call x1.m(x2):
+	 * out[g, n] = in[g, n] ⊔ (⊔(C,m) ∈ CHA(x1) out[g, last(C, m)] )
+	 *
+	 * @param argu
+	 * @param assignee
+	 * @param methodName
+	 * @param possibleTypes
+	 */
+	private void getConstraint5(Location argu, NullableIdentifierDefinition assignee, String methodName, Collection<String> possibleTypes)
+	{
+		for (var g : nullablesInScope)
+		{
+			if (g.equals(assignee))
+				continue;
+
+			EqualityRelationship r = new EqualityRelationship();
+			r.left = new VariableOut(g, argu);
+
+			UnionFunction union = new UnionFunction();
+			union.getInput().add(new VariableIn(g, argu));
+
+			for (String className : possibleTypes)
+			{
+				union.getInput().add(new VariableOut(g, ProgramStructureCollector.getLastStatement(className, methodName)));
+			}
+			r.right = union;
+			constraints.add(r);
+		}
 	}
 
 	//	@Override

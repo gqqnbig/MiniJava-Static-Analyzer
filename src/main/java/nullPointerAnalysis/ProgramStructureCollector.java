@@ -87,6 +87,12 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	}
 
 
+
+	public static Location getFirstStatement(String className, String methodName)
+	{
+		return null;
+	}
+
 	public static Location getLastStatement(String className, String methodName)
 	{
 		Tuple key = new Tuple();
@@ -96,6 +102,10 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		return lastStatementData.get(key);
 	}
 
+	public static NullableIdentifierDefinition getParameter(String className, String methodName, int parameterIndex)
+	{
+		return null;
+	}
 
 	Location lastStatement;
 
@@ -104,6 +114,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		nullables = new ArrayList<>();
 		lastStatementData = new HashMap<>();
 	}
+
 
 	@Override
 	public Object visitScope(MainClass n)
