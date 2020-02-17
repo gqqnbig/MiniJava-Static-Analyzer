@@ -8,8 +8,8 @@ import java.util.*;
 
 public class ProgramStructureCollector extends typeAnalysis.ProgramStructureCollector
 {
-	static ArrayList<NullableIdentifierDefinition> nullables = new ArrayList<>();
-	static HashMap<Tuple, Location> lastStatementData = new HashMap<>();
+	static ArrayList<NullableIdentifierDefinition> nullables;
+	static HashMap<Tuple, Location> lastStatementData;
 
 	public static boolean isNullable(Type type)
 	{
@@ -87,8 +87,6 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	}
 
 
-	Location lastStatement;
-
 	public static Location getLastStatement(String className, String methodName)
 	{
 		Tuple key = new Tuple();
@@ -98,6 +96,14 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		return lastStatementData.get(key);
 	}
 
+
+	Location lastStatement;
+
+	protected ProgramStructureCollector()
+	{
+		nullables = new ArrayList<>();
+		lastStatementData = new HashMap<>();
+	}
 
 	@Override
 	public Object visitScope(MainClass n)

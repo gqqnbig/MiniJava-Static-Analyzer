@@ -35,12 +35,25 @@ import java.util.HashSet;
  */
 public class ProgramStructureCollector extends ScopeVisitor<Object>
 {
-	protected static HashMap<String, HashSet<String>> classMethodMapping = new HashMap<String, HashSet<String>>();
+	protected static HashMap<String, HashSet<String>> classMethodMapping;
 
 	/*
 	map from subclass to its superclass
 	 */
-	protected static HashMap<String, String> superClassHierarchy = new HashMap<>();
+	protected static HashMap<String, String> superClassHierarchy;
+
+	public static void init()
+	{
+
+
+	}
+
+	protected ProgramStructureCollector()
+	{
+		classMethodMapping = new HashMap<String, HashSet<String>>();
+		superClassHierarchy = new HashMap<>();
+	}
+
 
 	@Override
 	public Object visitScope(MainClass n)
