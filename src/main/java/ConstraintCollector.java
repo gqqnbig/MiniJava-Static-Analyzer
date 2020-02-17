@@ -145,7 +145,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 
 				for (String className : possibleTypes)
 				{
-					union.getInput().add(new VariableOut(g, getLastStatement(className, methodName)));
+					union.getInput().add(new VariableOut(g, ProgramStructureCollector.getLastStatement(className, methodName)));
 				}
 				r.right = union;
 				constraints.add(r);
@@ -167,11 +167,6 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 
 
 		n.f2.accept(this, argu);
-	}
-
-	private static Location getLastStatement(String className, String methodName)
-	{
-		return null;
 	}
 
 	//	@Override

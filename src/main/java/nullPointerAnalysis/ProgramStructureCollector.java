@@ -1,15 +1,16 @@
 package nullPointerAnalysis;
 
 import syntaxtree.*;
+import utils.Location;
 import utils.Scope;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 public class ProgramStructureCollector extends typeAnalysis.ProgramStructureCollector
 {
+	static ArrayList<NullableIdentifierDefinition> nullables = new ArrayList<>();
+	static HashMap<Tuple, Location> lastStatementData = new HashMap<>();
+
 	public static boolean isNullable(Type type)
 	{
 		if (type.f0.choice instanceof BooleanType)
@@ -26,10 +27,6 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		goal.accept(new ProgramStructureCollector());
 	}
 
-
-//	static HashMap<NullableIdentifier, Scope> nullables = new HashMap<>();
-
-	static ArrayList<NullableIdentifierDefinition> nullables = new ArrayList<>();
 
 	private static List<NullableIdentifierDefinition> getNullableFieldsDefinedInClass(String className)
 	{
@@ -89,18 +86,17 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		return fieldDefinition;
 	}
 
-//	public static List<NullableIdentifier> getNullableIdentifierInScope(Scope scope)
-//	{
-//		List<NullableIdentifier> scopeNullables = new ArrayList<>();
-//		for (HashMap.Entry<NullableIdentifier, Scope> entry : nullables.entrySet())
-//		{
-//			if (entry.getValue().equals(scope))
-//				scopeNullables.add(entry.getKey());
-//		}
-//		return scopeNullables;
-//	}
-//
-//	static HashMap<Identifier, Scope> nullables = new HashMap<>();
+
+	Location lastStatement;
+
+	public static Location getLastStatement(String className, String methodName)
+	{
+		Tuple key = new Tuple();
+		key.item1 = className;
+		key.item2 = methodName;
+
+		return lastStatementData.get(key);
+	}
 
 
 	@Override
@@ -108,6 +104,16 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	{
 		super.visitScope(n);
 		n.f14.accept(this);
+		n.f15.accept(this);
+		if (lastStatement != null)
+		{
+			Tuple key = new Tuple();
+			key.item1 = getClassName();
+			key.item2 = getMethodName();
+			lastStatementData.put(key, lastStatement);
+		}
+		lastStatement = null;
+
 		return null;
 	}
 
@@ -118,6 +124,15 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 
 		n.f4.accept(this);
 		n.f7.accept(this);
+
+
+		lastStatement = new Location(n.f9);
+		Tuple key = new Tuple();
+		key.item1 = getClassName();
+		key.item2 = getMethodName();
+		lastStatementData.put(key, lastStatement);
+
+		lastStatement = null;
 		return null;
 	}
 
@@ -151,10 +166,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public Object visit(VarDeclaration n)
 	{
 		if (isNullable(n.f0))
-		{
-//			nullables.put(new NullableIdentifier(n.f1), new Scope(getClassName(), getMethodName()));
 			nullables.add(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false));
-		}
 		return null;
 	}
 
@@ -162,10 +174,36 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public Object visit(FormalParameter n)
 	{
 		if (isNullable(n.f0))
-		{
-//			nullables.put(new NullableIdentifier(n.f1), new Scope(getClassName(), getMethodName()));
 			nullables.add(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), true));
-		}
 		return null;
+	}
+
+	@Override
+	public Object visit(Statement n)
+	{
+		lastStatement = new Location(n);
+		return super.visit(n);
+	}
+}
+
+class Tuple
+{
+	public String item1;
+	public String item2;
+
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Tuple tuple = (Tuple) o;
+		return Objects.equals(item1, tuple.item1) &&
+				Objects.equals(item2, tuple.item2);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(item1, item2);
 	}
 }
