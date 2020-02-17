@@ -119,13 +119,15 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	public void visit(AssignmentStatement n, Location argu)
 	{
 		Scope scope = new Scope(getClassName(), getMethodName());
-		VariableOut vOut = new VariableOut(ProgramStructureCollector.getDefinition(n.f0, scope), argu);
-		VariableRes vRes = new VariableRes(n.f2, argu);
-
-		constraints.add(new EqualityRelationship(vOut, vRes));
-
-
 		NullableIdentifierDefinition assignee = ProgramStructureCollector.getDefinition(n.f0, scope);
+		if(assignee!=null)
+		{
+			VariableOut vOut = new VariableOut(assignee, argu);
+			VariableRes vRes = new VariableRes(n.f2, argu);
+
+			constraints.add(new EqualityRelationship(vOut, vRes));
+		}
+
 		if (n.f2.f0.choice instanceof MessageSend)
 		{
 			String methodName = ((MessageSend) n.f2.f0.choice).f2.f0.toString();
