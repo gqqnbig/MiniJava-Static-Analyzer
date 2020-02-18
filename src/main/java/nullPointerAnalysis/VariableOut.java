@@ -2,10 +2,10 @@ package nullPointerAnalysis;
 
 import utils.Location;
 
-public class VariableOut extends FlowSensitiveNullPointerAnalysisVariable<NullableIdentifierDefinition>
+public class VariableOut extends FlowSensitiveNullPointerAnalysisVariable<ObjectIdentifierDefinition>
 {
 
-	public VariableOut(NullableIdentifierDefinition input, Location statement)
+	public VariableOut(ObjectIdentifierDefinition input, Location statement)
 	{
 		super(input, statement);
 	}

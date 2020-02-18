@@ -15,7 +15,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 {
 	private boolean isFirstStatement;
 
-	List<NullableIdentifierDefinition> nullablesInScope;
+	List<ObjectIdentifierDefinition> nullablesInScope;
 
 	List<EqualityRelationship> constraints = new ArrayList<>();
 
@@ -44,7 +44,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		{
 			//return statement
 			Location returnLocation = new Location(n.f9);
-			for (NullableIdentifierDefinition nullable : nullablesInScope)
+			for (ObjectIdentifierDefinition nullable : nullablesInScope)
 			{
 				EqualityRelationship r = new EqualityRelationship();
 				r.left = new VariableIn(nullable, returnLocation);
@@ -75,23 +75,23 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 //
 ////		assert NullableCollector.nullables.containsKey(n.f1);
 //
-//		VariableIn vIn = new VariableIn(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
+//		VariableIn vIn = new VariableIn(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
 //		variables.add(vIn);
 //
-//		VariableOut vOut = new VariableOut(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
+//		VariableOut vOut = new VariableOut(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
 //		variables.add(vOut);
 //	}
 
 	@Override
 	public void visit(Statement n, Location argu)
 	{
-//		List<utils.NullableIdentifierDefinition> nullables = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
+//		List<utils.ObjectIdentifierDefinition> nullables = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
 
 		Location location = new Location(n);
 		if (isFirstStatement)
 		{
 			//If there are no available nullables in the first statement, there will not be any nullables in the subsequent statements.
-			for (NullableIdentifierDefinition nullable : nullablesInScope)
+			for (ObjectIdentifierDefinition nullable : nullablesInScope)
 			{
 				EqualityRelationship r = new EqualityRelationship();
 				r.left = new VariableIn(nullable, location);
@@ -108,7 +108,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visit(PrintStatement n, Location argu)
 	{
-		for (NullableIdentifierDefinition nullable : nullablesInScope)
+		for (ObjectIdentifierDefinition nullable : nullablesInScope)
 		{
 			EqualityRelationship r = new EqualityRelationship();
 			r.left = new VariableOut(nullable, argu);
@@ -121,7 +121,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	public void visit(AssignmentStatement n, Location location)
 	{
 		Scope scope = new Scope(getClassName(), getMethodName());
-		NullableIdentifierDefinition assignee = ProgramStructureCollector.getDefinition(n.f0, scope);
+		ObjectIdentifierDefinition assignee = ProgramStructureCollector.getDefinition(n.f0, scope);
 		if (assignee != null)
 		{
 			VariableOut vOut = new VariableOut(assignee, location);
@@ -151,7 +151,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 				UnionFunction union = new UnionFunction();
 				for (var type : possibleTypes)
 				{
-					NullableIdentifierDefinition parameter = ProgramStructureCollector.getParameter(type, methodName, i);
+					ObjectIdentifierDefinition parameter = ProgramStructureCollector.getParameter(type, methodName, i);
 					if (parameter != null)
 					{
 						VariableIn vIn = new VariableIn(parameter, ProgramStructureCollector.getFirstStatement(type, methodName));
@@ -192,7 +192,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	 * @param methodName
 	 * @param possibleTypes
 	 */
-	private void getConstraint5(Location argu, NullableIdentifierDefinition assignee, String methodName, Collection<String> possibleTypes)
+	private void getConstraint5(Location argu, ObjectIdentifierDefinition assignee, String methodName, Collection<String> possibleTypes)
 	{
 		for (var g : nullablesInScope)
 		{

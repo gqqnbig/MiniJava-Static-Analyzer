@@ -2,7 +2,7 @@ package nullPointerAnalysis;
 
 import syntaxtree.Identifier;
 
-public class NullableIdentifierDefinition
+public class ObjectIdentifierDefinition
 {
 	private final String identifier;
 	public String Class;
@@ -22,7 +22,7 @@ public class NullableIdentifierDefinition
 	 * @param methodName
 	 * @param parameterIndex -1 means not a parameter.
 	 */
-	public NullableIdentifierDefinition(Identifier identifier, String className, String methodName, int parameterIndex)
+	public ObjectIdentifierDefinition(Identifier identifier, String className, String methodName, int parameterIndex)
 	{
 
 		this.identifier = identifier.f0.toString();
@@ -31,7 +31,7 @@ public class NullableIdentifierDefinition
 		this.parameterIndex = parameterIndex;
 	}
 
-	public NullableIdentifierDefinition(Identifier mainMethodArgs, String className)
+	public ObjectIdentifierDefinition(Identifier mainMethodArgs, String className)
 	{
 
 		this.identifier = mainMethodArgs.f0.toString();

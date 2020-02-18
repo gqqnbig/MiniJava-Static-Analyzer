@@ -9,9 +9,9 @@ import java.util.*;
 
 public class ProgramStructureCollector extends typeAnalysis.ProgramStructureCollector
 {
-	static ArrayList<NullableIdentifierDefinition> nullables;
+	static ArrayList<ObjectIdentifierDefinition> nullables;
 	static HashMap<Tuple, Location> lastStatementData;
-//	static HashMap<Tuple, NullableIdentifierDefinition> methodParameterInfos;
+//	static HashMap<Tuple, ObjectIdentifierDefinition> methodParameterInfos;
 
 //region static methods
 
@@ -32,10 +32,10 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	}
 
 
-	private static List<NullableIdentifierDefinition> getNullableFieldsDefinedInClass(String className)
+	private static List<ObjectIdentifierDefinition> getNullableFieldsDefinedInClass(String className)
 	{
-		List<NullableIdentifierDefinition> scopeNullables = new ArrayList<>();
-		for (NullableIdentifierDefinition entry : nullables)
+		List<ObjectIdentifierDefinition> scopeNullables = new ArrayList<>();
+		for (ObjectIdentifierDefinition entry : nullables)
 		{
 			if (entry.Class.equals(className) && entry.Method == null)
 				scopeNullables.add(entry);
@@ -43,10 +43,10 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		return scopeNullables;
 	}
 
-	public static List<NullableIdentifierDefinition> getNullableIdentifiersInScope(Scope scope)
+	public static List<ObjectIdentifierDefinition> getNullableIdentifiersInScope(Scope scope)
 	{
-		List<NullableIdentifierDefinition> scopeNullables = new ArrayList<>();
-		for (NullableIdentifierDefinition entry : nullables)
+		List<ObjectIdentifierDefinition> scopeNullables = new ArrayList<>();
+		for (ObjectIdentifierDefinition entry : nullables)
 		{
 			if (entry.Class.equals(scope.Class) &&
 					(entry.Method == null || entry.Method.equals(scope.Method))) //fields are available in a method.
@@ -71,9 +71,9 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	 * @param identifier
 	 * @return
 	 */
-	public static NullableIdentifierDefinition getDefinition(Identifier identifier, Scope scope)
+	public static ObjectIdentifierDefinition getDefinition(Identifier identifier, Scope scope)
 	{
-		NullableIdentifierDefinition fieldDefinition = null;
+		ObjectIdentifierDefinition fieldDefinition = null;
 		for (var d : getNullableIdentifiersInScope(scope))
 		{
 			if (d.getIdentifier().equals(identifier.f0.toString()))
@@ -112,7 +112,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	 * @param parameterIndex
 	 * @return null if the parameter is not of type object.
 	 */
-	public static NullableIdentifierDefinition getParameter(String className, String methodName, int parameterIndex)
+	public static ObjectIdentifierDefinition getParameter(String className, String methodName, int parameterIndex)
 	{
 		var parameter = nullables.stream().filter(o -> o.parameterIndex == parameterIndex && o.Class.equals(className) && Objects.equals(o.Method, methodName)).findAny();
 		// parameter may be null if the parameter is not object, eg. int.
@@ -137,7 +137,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public Object visitScope(MainClass n)
 	{
 		super.visitScope(n);
-		nullables.add(new NullableIdentifierDefinition(n.f11, getClassName()));
+		nullables.add(new ObjectIdentifierDefinition(n.f11, getClassName()));
 
 		n.f14.accept(this);
 		n.f15.accept(this);
@@ -165,7 +165,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		{
 			FormalParameter p = parameters.get(i);
 			if (isNullable(p.f0))
-				nullables.add(new NullableIdentifierDefinition(p.f1, getClassName(), getMethodName(), i));
+				nullables.add(new ObjectIdentifierDefinition(p.f1, getClassName(), getMethodName(), i));
 		}
 
 
@@ -212,7 +212,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public Object visit(VarDeclaration n)
 	{
 		if (isNullable(n.f0))
-			nullables.add(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), -1));
+			nullables.add(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), -1));
 		return null;
 	}
 

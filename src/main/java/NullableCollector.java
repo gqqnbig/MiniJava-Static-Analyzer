@@ -28,17 +28,17 @@ import java.util.List;
 //
 ////	static HashMap<NullableIdentifier, Scope> nullables = new HashMap<>();
 //
-//	static ArrayList<NullableIdentifierDefinition> nullables = new ArrayList<>();
+//	static ArrayList<ObjectIdentifierDefinition> nullables = new ArrayList<>();
 //
 //	/*
 //	map from subclass to its superclass
 //	 */
 //	static HashMap<String, String> superClassHierarchy = new HashMap<>();
 //
-//	private static List<NullableIdentifierDefinition> getNullableFieldsDefinedInClass(String className)
+//	private static List<ObjectIdentifierDefinition> getNullableFieldsDefinedInClass(String className)
 //	{
-//		List<NullableIdentifierDefinition> scopeNullables = new ArrayList<>();
-//		for (NullableIdentifierDefinition entry : nullables)
+//		List<ObjectIdentifierDefinition> scopeNullables = new ArrayList<>();
+//		for (ObjectIdentifierDefinition entry : nullables)
 //		{
 //			if (entry.Class.equals(className) && entry.Method == null)
 //				scopeNullables.add(entry);
@@ -46,10 +46,10 @@ import java.util.List;
 //		return scopeNullables;
 //	}
 //
-//	public static List<NullableIdentifierDefinition> getNullableIdentifiersInScope(Scope scope)
+//	public static List<ObjectIdentifierDefinition> getNullableIdentifiersInScope(Scope scope)
 //	{
-//		List<NullableIdentifierDefinition> scopeNullables = new ArrayList<>();
-//		for (NullableIdentifierDefinition entry : nullables)
+//		List<ObjectIdentifierDefinition> scopeNullables = new ArrayList<>();
+//		for (ObjectIdentifierDefinition entry : nullables)
 //		{
 //			if (entry.Class.equals(scope.Class) &&
 //					(entry.Method == null || entry.Method.equals(scope.Method))) //fields are available in a method.
@@ -74,9 +74,9 @@ import java.util.List;
 //	 * @param identifier
 //	 * @return
 //	 */
-//	public static NullableIdentifierDefinition getDefinition(Identifier identifier, Scope scope)
+//	public static ObjectIdentifierDefinition getDefinition(Identifier identifier, Scope scope)
 //	{
-//		NullableIdentifierDefinition fieldDefinition = null;
+//		ObjectIdentifierDefinition fieldDefinition = null;
 //		for (var d : getNullableIdentifiersInScope(scope))
 //		{
 //			if (d.getIdentifier().equals(identifier.f0.toString()))
@@ -147,7 +147,7 @@ import java.util.List;
 //		if (isNullable(n.f0))
 //		{
 ////			nullables.put(new NullableIdentifier(n.f1), new Scope(getClassName(), getMethodName()));
-//			nullables.add(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false));
+//			nullables.add(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), false));
 //		}
 //		return null;
 //	}
@@ -158,7 +158,7 @@ import java.util.List;
 //		if (isNullable(n.f0))
 //		{
 ////			nullables.put(new NullableIdentifier(n.f1), new Scope(getClassName(), getMethodName()));
-//			nullables.add(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), true));
+//			nullables.add(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), true));
 //		}
 //		return null;
 //	}

@@ -16,7 +16,7 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 {
 	ArrayList<FlowSensitiveVariable> variables = new ArrayList<>();
 
-	List<NullableIdentifierDefinition> nullablesInScope;
+	List<ObjectIdentifierDefinition> nullablesInScope;
 
 	@Override
 	public void visitScope(MainClass n, Location argu)
@@ -37,7 +37,7 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 
 		//return statement
 		Location returnLocation = new Location(n.f9);
-		for (NullableIdentifierDefinition nullable : nullablesInScope)
+		for (ObjectIdentifierDefinition nullable : nullablesInScope)
 		{
 			variables.add(new VariableIn(nullable, returnLocation));
 			variables.add(new VariableOut(nullable, returnLocation));
@@ -66,20 +66,20 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 //
 ////		assert NullableCollector.nullables.containsKey(n.f1);
 //
-//		VariableIn vIn = new VariableIn(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
+//		VariableIn vIn = new VariableIn(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
 //		variables.add(vIn);
 //
-//		VariableOut vOut = new VariableOut(new NullableIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
+//		VariableOut vOut = new VariableOut(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
 //		variables.add(vOut);
 //	}
 
 	@Override
 	public void visit(Statement n, Location argu)
 	{
-//		List<utils.NullableIdentifierDefinition> nullables = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
+//		List<utils.ObjectIdentifierDefinition> nullables = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
 
 		Location location = new Location(n);
-		for (NullableIdentifierDefinition nullable : nullablesInScope)
+		for (ObjectIdentifierDefinition nullable : nullablesInScope)
 		{
 			variables.add(new VariableIn(nullable, location));
 			variables.add(new VariableOut(nullable, location));
