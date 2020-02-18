@@ -11,6 +11,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 {
 	static ArrayList<ObjectIdentifierDefinition> nullables;
 	static HashMap<Tuple, Location> lastStatementData;
+	static HashMap<Tuple, Location> firstStatementData;
 //	static HashMap<Tuple, ObjectIdentifierDefinition> methodParameterInfos;
 
 //region static methods
@@ -93,7 +94,8 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 
 	public static Location getFirstStatement(String className, String methodName)
 	{
-		return null;
+//		return null;
+		return firstStatementData.get(new Tuple(className, methodName));
 	}
 
 	public static Location getLastStatement(String className, String methodName)
@@ -106,7 +108,6 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	}
 
 	/**
-	 *
 	 * @param className
 	 * @param methodName
 	 * @param parameterIndex
@@ -124,11 +125,13 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	//endregion
 
 	Location lastStatement;
+	Location firstStatement;
 
 	protected ProgramStructureCollector()
 	{
 		nullables = new ArrayList<>();
 		lastStatementData = new HashMap<>();
+		firstStatementData = new HashMap<>();
 //		methodParameterInfos = new HashMap<>();
 	}
 
@@ -140,14 +143,19 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		nullables.add(new ObjectIdentifierDefinition(n.f11, getClassName()));
 
 		n.f14.accept(this);
+
+		firstStatement = null;
 		n.f15.accept(this);
+		Tuple key = new Tuple();
 		if (lastStatement != null)
 		{
-			Tuple key = new Tuple();
 			key.item1 = getClassName();
 			key.item2 = getMethodName();
 			lastStatementData.put(key, lastStatement);
 		}
+		if (firstStatement != null)
+			firstStatementData.put(key, firstStatement);
+
 		lastStatement = null;
 
 		return null;
@@ -171,12 +179,19 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 
 		n.f7.accept(this);
 
+		firstStatement = null;
+		n.f8.accept(this);
+
 
 		lastStatement = new Location(n.f9);
 		Tuple key = new Tuple();
 		key.item1 = getClassName();
 		key.item2 = getMethodName();
 		lastStatementData.put(key, lastStatement);
+
+		if (firstStatement == null)
+			firstStatement = lastStatement;
+		firstStatementData.put(key, firstStatement);
 
 		lastStatement = null;
 		return null;
@@ -221,7 +236,11 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public Object visit(Statement n)
 	{
 		lastStatement = new Location(n);
-		return super.visit(n);
+		if (firstStatement == null)
+			firstStatement = lastStatement;
+
+		return null;
+//		return super.visit(n);
 	}
 }
 
