@@ -102,6 +102,26 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		isFirstStatement = false;
 
 
+		//C7
+		for (ObjectIdentifierDefinition nullable : nullablesInScope)
+		{
+			UnionFunction union = new UnionFunction();
+			List<Location> successors = ProgramStructureCollector.getSuccessors(getClassName(), getMethodName(), location);
+			for (Location s : successors)
+			{
+				VariableIn vIn = new VariableIn(nullable, s);
+				union.getInput().add(vIn);
+			}
+			if (union.getInput().size() > 0)
+			{
+				EqualityRelationship r = new EqualityRelationship();
+				r.left = new VariableOut(nullable, location);
+				r.right = union;
+				constraints.add(r);
+			}
+		}
+
+
 		super.visit(n, location);
 	}
 

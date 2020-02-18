@@ -6,12 +6,14 @@ import utils.Location;
 import utils.Scope;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ProgramStructureCollector extends typeAnalysis.ProgramStructureCollector
 {
-	static ArrayList<ObjectIdentifierDefinition> nullables;
-	static HashMap<Tuple, Location> lastStatementData;
-	static HashMap<Tuple, Location> firstStatementData;
+	static ArrayList<ObjectIdentifierDefinition> objects;
+	//	static HashMap<Tuple, Location> lastStatementData;
+//	static HashMap<Tuple, Location> firstStatementData;
+	static HashMap<Tuple, ArrayList<Location>> statementOrderData;
 //	static HashMap<Tuple, ObjectIdentifierDefinition> methodParameterInfos;
 
 //region static methods
@@ -36,7 +38,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	private static List<ObjectIdentifierDefinition> getNullableFieldsDefinedInClass(String className)
 	{
 		List<ObjectIdentifierDefinition> scopeNullables = new ArrayList<>();
-		for (ObjectIdentifierDefinition entry : nullables)
+		for (ObjectIdentifierDefinition entry : objects)
 		{
 			if (entry.Class.equals(className) && entry.Method == null)
 				scopeNullables.add(entry);
@@ -47,7 +49,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public static List<ObjectIdentifierDefinition> getNullableIdentifiersInScope(Scope scope)
 	{
 		List<ObjectIdentifierDefinition> scopeNullables = new ArrayList<>();
-		for (ObjectIdentifierDefinition entry : nullables)
+		for (ObjectIdentifierDefinition entry : objects)
 		{
 			if (entry.Class.equals(scope.Class) &&
 					(entry.Method == null || entry.Method.equals(scope.Method))) //fields are available in a method.
@@ -95,16 +97,13 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public static Location getFirstStatement(String className, String methodName)
 	{
 //		return null;
-		return firstStatementData.get(new Tuple(className, methodName));
+		return statementOrderData.get(new Tuple(className, methodName)).get(0);
 	}
 
 	public static Location getLastStatement(String className, String methodName)
 	{
-		Tuple key = new Tuple();
-		key.item1 = className;
-		key.item2 = methodName;
-
-		return lastStatementData.get(key);
+		ArrayList<Location> list = statementOrderData.get(new Tuple(className, methodName));
+		return list.get(list.size() - 1);
 	}
 
 	/**
@@ -115,7 +114,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	 */
 	public static ObjectIdentifierDefinition getParameter(String className, String methodName, int parameterIndex)
 	{
-		var parameter = nullables.stream().filter(o -> o.parameterIndex == parameterIndex && o.Class.equals(className) && Objects.equals(o.Method, methodName)).findAny();
+		var parameter = objects.stream().filter(o -> o.parameterIndex == parameterIndex && o.Class.equals(className) && Objects.equals(o.Method, methodName)).findAny();
 		// parameter may be null if the parameter is not object, eg. int.
 		if (parameter.isEmpty())
 			return null;
@@ -129,10 +128,17 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 
 	protected ProgramStructureCollector()
 	{
-		nullables = new ArrayList<>();
-		lastStatementData = new HashMap<>();
-		firstStatementData = new HashMap<>();
-//		methodParameterInfos = new HashMap<>();
+		objects = new ArrayList<>();
+		statementOrderData = new HashMap<>();
+	}
+
+	public static List<Location> getSuccessors(String className, String methodName, Location location)
+	{
+		assert location != null : "Parameter location cannot be null.";
+		ArrayList<Location> list = statementOrderData.get(new Tuple(className, methodName));
+		int i = java.util.Collections.binarySearch(list, location);
+		assert i >= 0;
+		return list.subList(i + 1, list.size());
 	}
 
 
@@ -140,23 +146,24 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public Object visitScope(MainClass n)
 	{
 		super.visitScope(n);
-		nullables.add(new ObjectIdentifierDefinition(n.f11, getClassName()));
+		objects.add(new ObjectIdentifierDefinition(n.f11, getClassName()));
 
 		n.f14.accept(this);
 
-		firstStatement = null;
+		Tuple key = new Tuple(getClassName(), getMethodName());
+		statementOrderData.put(key, new ArrayList<>());
+//		firstStatement = null;
 		n.f15.accept(this);
-		Tuple key = new Tuple();
-		if (lastStatement != null)
-		{
-			key.item1 = getClassName();
-			key.item2 = getMethodName();
-			lastStatementData.put(key, lastStatement);
-		}
-		if (firstStatement != null)
-			firstStatementData.put(key, firstStatement);
-
-		lastStatement = null;
+//		if (lastStatement != null)
+//		{
+//			key.item1 = getClassName();
+//			key.item2 = getMethodName();
+//			lastStatementData.put(key, lastStatement);
+//		}
+//		if (firstStatement != null)
+//			firstStatementData.put(key, firstStatement);
+//
+//		lastStatement = null;
 
 		return null;
 	}
@@ -173,27 +180,30 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		{
 			FormalParameter p = parameters.get(i);
 			if (isNullable(p.f0))
-				nullables.add(new ObjectIdentifierDefinition(p.f1, getClassName(), getMethodName(), i));
+				objects.add(new ObjectIdentifierDefinition(p.f1, getClassName(), getMethodName(), i));
 		}
 
 
 		n.f7.accept(this);
 
-		firstStatement = null;
+//		firstStatement = null;
+		Tuple key = new Tuple(getClassName(), getMethodName());
+		statementOrderData.put(key, new ArrayList<>());
 		n.f8.accept(this);
 
 
-		lastStatement = new Location(n.f9);
-		Tuple key = new Tuple();
-		key.item1 = getClassName();
-		key.item2 = getMethodName();
-		lastStatementData.put(key, lastStatement);
-
-		if (firstStatement == null)
-			firstStatement = lastStatement;
-		firstStatementData.put(key, firstStatement);
-
-		lastStatement = null;
+		Location returnStatement = new Location(n.f9);
+		statementOrderData.get(key).add(returnStatement);
+//		Tuple key = new Tuple();
+//		key.item1 = getClassName();
+//		key.item2 = getMethodName();
+//		lastStatementData.put(key, lastStatement);
+//
+//		if (firstStatement == null)
+//			firstStatement = lastStatement;
+//		firstStatementData.put(key, firstStatement);
+//
+//		lastStatement = null;
 		return null;
 	}
 
@@ -227,7 +237,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public Object visit(VarDeclaration n)
 	{
 		if (isNullable(n.f0))
-			nullables.add(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), -1));
+			objects.add(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), -1));
 		return null;
 	}
 
@@ -235,9 +245,10 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	@Override
 	public Object visit(Statement n)
 	{
-		lastStatement = new Location(n);
-		if (firstStatement == null)
-			firstStatement = lastStatement;
+//		lastStatement = new Location(n);
+//		if (firstStatement == null)
+//			firstStatement = lastStatement;
+		statementOrderData.get(new Tuple(getClassName(), getMethodName())).add(new Location(n));
 
 		return null;
 //		return super.visit(n);

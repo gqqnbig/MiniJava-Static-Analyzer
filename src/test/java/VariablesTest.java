@@ -1,7 +1,5 @@
 import math.Variable;
-import nullPointerAnalysis.EqualityRelationship;
-import nullPointerAnalysis.ObjectIdentifierDefinition;
-import nullPointerAnalysis.ProgramStructureCollector;
+import nullPointerAnalysis.*;
 import org.junit.Assert;
 import org.junit.Test;
 import syntaxtree.Goal;
@@ -38,9 +36,9 @@ public class VariablesTest
 		goal.accept(constraintCollector, null);
 		for (EqualityRelationship r : constraintCollector.constraints)
 		{
-			if (r.left instanceof Variable)
+			if (r.left instanceof VariableIn || r.left instanceof VariableOut || r.left instanceof VariableRes)
 				Assert.assertTrue(r.left + " is not a previously captured variable.", variableCollector.variables.contains(r.left));
-			if (r.right instanceof Variable)
+			if (r.right instanceof VariableIn || r.right instanceof VariableOut || r.right instanceof VariableRes)
 				Assert.assertTrue(r.right + " is not a previously captured variable.", variableCollector.variables.contains(r.right));
 
 

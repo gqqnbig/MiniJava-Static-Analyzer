@@ -5,7 +5,7 @@ import syntaxtree.*;
 
 import java.util.Objects;
 
-public class Location
+public class Location implements Comparable<Location>
 {
 
 	private int line;
@@ -85,5 +85,15 @@ public class Location
 	public int hashCode()
 	{
 		return Objects.hash(line, column);
+	}
+
+	@Override
+	public int compareTo(Location o)
+	{
+		int r = Integer.compare(line, o.line);
+		if (r != 0)
+			return r;
+
+		return Integer.compare(column, o.column);
 	}
 }

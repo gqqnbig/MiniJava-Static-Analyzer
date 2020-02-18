@@ -8,8 +8,9 @@ import java.util.Objects;
 
 /**
  * A variable used in flow sensitive null pointer analysis. The domain of the variable is <code>AnalysisResult</code>.
- *
+ * <p>
  * The input can be arbitrary.
+ *
  * @param <TInput>
  */
 public abstract class FlowSensitiveNullPointerAnalysisVariable<TInput> implements Variable<TInput, AnalysisResult>, FlowSensitiveVariable<TInput, AnalysisResult>, AnalysisResult
@@ -19,6 +20,8 @@ public abstract class FlowSensitiveNullPointerAnalysisVariable<TInput> implement
 
 	public FlowSensitiveNullPointerAnalysisVariable(TInput input, Location statement)
 	{
+		assert statement != null;
+
 		this.input = input;
 		this.statement = statement;
 	}
