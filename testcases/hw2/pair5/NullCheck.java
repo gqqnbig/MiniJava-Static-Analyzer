@@ -1,6 +1,6 @@
 // Since variable a can be of type A or B, this should return null pointer error.
 class Main {
-    public static void main(String[] a){
+    public static void main(String[] args){
     	A a;
     	a = new B();
     	a = new A();

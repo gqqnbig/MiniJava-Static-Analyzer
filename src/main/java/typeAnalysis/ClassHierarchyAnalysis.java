@@ -18,7 +18,7 @@ public class ClassHierarchyAnalysis
 	public static void init(Goal goal)
 	{
 		ClassHierarchyAnalysis.goal = goal;
-		if (ProgramStructureCollector.classMethodMapping.size() == 0)
+		if (ProgramStructureCollector.classMethodMapping == null || ProgramStructureCollector.classMethodMapping.size() == 0)
 		{
 			ProgramStructureCollector cmv = new ProgramStructureCollector();
 			goal.accept(cmv);

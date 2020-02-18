@@ -90,7 +90,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		Location location = new Location(n);
 		if (isFirstStatement)
 		{
-
+			//If there are no available nullables in the first statement, there will not be any nullables in the subsequent statements.
 			for (NullableIdentifierDefinition nullable : nullablesInScope)
 			{
 				EqualityRelationship r = new EqualityRelationship();
@@ -151,11 +151,18 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 				UnionFunction union = new UnionFunction();
 				for (var type : possibleTypes)
 				{
-					VariableIn vIn = new VariableIn(ProgramStructureCollector.getParameter(type, methodName, i), ProgramStructureCollector.getFirstStatement(type, methodName));
-					union.getInput().add(vIn);
+					NullableIdentifierDefinition parameter = ProgramStructureCollector.getParameter(type, methodName, i);
+					if (parameter != null)
+					{
+						VariableIn vIn = new VariableIn(parameter, ProgramStructureCollector.getFirstStatement(type, methodName));
+						union.getInput().add(vIn);
+					}
 				}
-				r.right = union;
-				constraints.add(r);
+				if (union.getInput().size() > 0)
+				{
+					r.right = union;
+					constraints.add(r);
+				}
 			}
 		}
 		else

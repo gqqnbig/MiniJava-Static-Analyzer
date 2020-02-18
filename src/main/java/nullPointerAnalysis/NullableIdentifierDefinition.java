@@ -7,7 +7,7 @@ public class NullableIdentifierDefinition
 	private final String identifier;
 	public String Class;
 	public String Method;
-	public boolean IsParameter;
+	public int parameterIndex;
 
 	public String getIdentifier()
 	{
@@ -16,18 +16,33 @@ public class NullableIdentifierDefinition
 
 	/**
 	 * Only NullableCollector should call this.
+	 *
 	 * @param identifier
 	 * @param className
 	 * @param methodName
-	 * @param isParameter
+	 * @param parameterIndex -1 means not a parameter.
 	 */
-	public NullableIdentifierDefinition(Identifier identifier, String className, String methodName, boolean isParameter)
+	public NullableIdentifierDefinition(Identifier identifier, String className, String methodName, int parameterIndex)
 	{
 
 		this.identifier = identifier.f0.toString();
 		Class = className;
 		Method = methodName;
-		IsParameter = isParameter;
+		this.parameterIndex = parameterIndex;
+	}
+
+	public NullableIdentifierDefinition(Identifier mainMethodArgs, String className)
+	{
+
+		this.identifier = mainMethodArgs.f0.toString();
+		Class = className;
+		Method = "main";
+		parameterIndex = 0;
+	}
+
+	public boolean getIsParameter()
+	{
+		return parameterIndex > -1;
 	}
 
 	public String toString()
@@ -35,10 +50,11 @@ public class NullableIdentifierDefinition
 		if (Method == null)
 			return String.format("Field %s defined in %s", identifier, Class);
 
-		if (IsParameter)
+		if (parameterIndex >= 0)
 			return String.format("Parameter %s defined in %s.%s", identifier, Class, Method);
 
 		return String.format("Variable %s defined in %s.%s", identifier, Class, Method);
 
 	}
+
 }

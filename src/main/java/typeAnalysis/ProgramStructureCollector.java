@@ -71,7 +71,7 @@ public class ProgramStructureCollector extends ScopeVisitor<Object>
 	{
 		ParameterCollector parameterCollector = new ParameterCollector();
 		n.f4.accept(parameterCollector);
-		classMethodMapping.get(getClassName()).add(new Tuple<>(getMethodName(), parameterCollector.parameterCount));
+		classMethodMapping.get(getClassName()).add(new Tuple<>(getMethodName(), parameterCollector.parameters.size()));
 		return null;
 	}
 

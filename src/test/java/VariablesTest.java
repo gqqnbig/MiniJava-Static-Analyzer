@@ -1,14 +1,19 @@
 import math.Variable;
 import nullPointerAnalysis.EqualityRelationship;
+import nullPointerAnalysis.FlowSensitiveNullPointerAnalysisVariable;
+import nullPointerAnalysis.NullableIdentifierDefinition;
 import nullPointerAnalysis.ProgramStructureCollector;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Assert;
 import org.junit.Test;
 import syntaxtree.Goal;
 import typeAnalysis.ClassHierarchyAnalysis;
+import utils.FlowSensitiveVariable;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Objects;
+import java.util.concurrent.TransferQueue;
 
 public class VariablesTest
 {
@@ -16,7 +21,7 @@ public class VariablesTest
 	public void testVariableNumbers() throws ParseException, FileNotFoundException
 	{
 		FileInputStream stream = new FileInputStream("testcases/hw2/pair5/NullCheck.java");
-		new MiniJavaParser(stream);
+		try {new MiniJavaParser(stream);} catch (Throwable e) {MiniJavaParser.ReInit(stream);}
 		Goal goal = MiniJavaParser.Goal();
 
 		ProgramStructureCollector.init(goal);
@@ -24,7 +29,13 @@ public class VariablesTest
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 
-		Assert.assertEquals(21, variableCollector.variables.size());
+		Assert.assertEquals(21, variableCollector.variables.stream().filter(v -> {
+			Object input = v.getInput();
+			if (input instanceof NullableIdentifierDefinition)
+				return (Objects.equals(((NullableIdentifierDefinition) input).Method, "main") && ((NullableIdentifierDefinition) input).getIsParameter()) == false;
+			else
+				return true;
+		}).count());
 
 
 		ConstraintCollector constraintCollector = new ConstraintCollector();
