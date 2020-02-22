@@ -58,19 +58,12 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 		n.f6.accept(this, null);
 	}
 
+
 //	@Override
-//	public void visit(VarDeclaration n, Location argu)
+//	public void visit(MessageSend n, Location argu)
 //	{
-//		if (NullableCollector.isNullable(n.f0) == false)
-//			return;
-//
-////		assert NullableCollector.nullables.containsKey(n.f1);
-//
-//		VariableIn vIn = new VariableIn(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
-//		variables.add(vIn);
-//
-//		VariableOut vOut = new VariableOut(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
-//		variables.add(vOut);
+//		variables.add(new VariableRes(n,argu));
+//		super.visit(n, argu);
 //	}
 
 	@Override
@@ -93,9 +86,11 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	{
 		assert argu != null;
 
-		VariableRes vRes = new VariableRes(n, argu);
-		variables.add(vRes);
-
+		//if (n.f0.choice instanceof AllocationExpression == false)
+		//{
+			VariableRes vRes = new VariableRes(n, argu);
+			variables.add(vRes);
+		//}
 		super.visit(n, argu);
 	}
 
@@ -110,5 +105,11 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 			variables.add(new VariableRes(n, argu));
 
 		super.visit(n, argu);
+	}
+
+	@Override
+	public void visit(AllocationExpression n, Location argu)
+	{
+		variables.add(new VariableRes(n, argu));
 	}
 }

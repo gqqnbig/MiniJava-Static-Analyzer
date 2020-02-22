@@ -135,6 +135,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			r.right = new VariableIn(nullable, argu);
 			constraints.add(r);
 		}
+		n.f2.accept(this, argu);
 	}
 
 	@Override
@@ -232,6 +233,15 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			r.right = union;
 			constraints.add(r);
 		}
+	}
+
+	@Override
+	public void visit(AllocationExpression n, Location argu)
+	{
+		EqualityRelationship r = new EqualityRelationship();
+		r.left = new VariableRes(n, argu);
+		r.right = new NotNullLiteral();
+		constraints.add(r);
 	}
 
 	//	@Override
