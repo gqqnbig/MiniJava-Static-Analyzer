@@ -2,6 +2,7 @@ package typeAnalysis;
 
 import syntaxtree.Goal;
 import syntaxtree.Identifier;
+import syntaxtree.PrimaryExpression;
 
 import java.util.*;
 
@@ -33,6 +34,17 @@ public class ClassHierarchyAnalysis
 //		MessageSendVisitor msv = new MessageSendVisitor();
 //		msv.setMethodName2class(m2c);
 //		goal.accept(msv, "");
+	}
+
+	/**
+	 * Get possible types of an identifier.
+	 *
+	 * @param
+	 * @return
+	 */
+	public static Collection<String> getPossibleTypes(PrimaryExpression receiver, String methodName, int parameterCount)
+	{
+		return methodAvailableInClassMapping.get(new Tuple<>(methodName, parameterCount));
 	}
 
 	/**

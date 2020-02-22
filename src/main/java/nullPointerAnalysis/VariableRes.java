@@ -1,10 +1,7 @@
 package nullPointerAnalysis;
 
 import baseVisitors.ExpressionToStringVisitor;
-import syntaxtree.AllocationExpression;
-import syntaxtree.Expression;
-import syntaxtree.Node;
-import syntaxtree.PrimaryExpression;
+import syntaxtree.*;
 import utils.FlowSensitiveVariable;
 import utils.Location;
 
@@ -31,7 +28,13 @@ public class VariableRes extends FlowSensitiveNullPointerAnalysisVariable<String
 	public VariableRes(AllocationExpression n, Location statement)
 	{
 		this((Node) n, statement);
-		expression=n;
+		expression = n;
+	}
+
+	public VariableRes(MessageSend n, Location statement)
+	{
+		this((Node) n, statement);
+		expression = n;
 	}
 
 

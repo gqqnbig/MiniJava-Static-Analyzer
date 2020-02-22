@@ -30,3 +30,10 @@ class Y {
 		return x.op(c, num);
 	}
 }
+
+class Z {
+	X x;
+	public int m(int a){
+		return x.op(a, a);
+	}
+}

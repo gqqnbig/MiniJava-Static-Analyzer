@@ -231,6 +231,32 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 //		constraints.add(r);
 //	}
 
+
+	@Override
+	public void visit(MessageSend n, Location argu)
+	{
+		EqualityRelationship r = new EqualityRelationship();
+		r.comment = "C10";
+
+		r.left = new VariableRes(n, argu);
+		UnionFunction union = new UnionFunction();
+
+		ArgumentsCollector argumentsCollector = new ArgumentsCollector();
+		n.f4.accept(argumentsCollector);
+		String methodName = n.f2.f0.toString();
+		var possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName, argumentsCollector.arguments.size());
+		for (String type : possibleTypes)
+		{
+			VariableRes vRes = new VariableRes(ProgramStructureCollector.getReturnExpression(type, methodName), ProgramStructureCollector.getLastStatement(type, methodName));
+			union.getInput().add(vRes);
+		}
+		r.right = union;
+		constraints.add(r);
+
+
+		super.visit(n, argu);
+	}
+
 	@Override
 	public void visit(PrimaryExpression n, Location argu)
 	{
@@ -239,7 +265,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			EqualityRelationship r = new EqualityRelationship();
 			r.left = new VariableRes((AllocationExpression) n.f0.choice, argu);
 			r.right = new NotNullLiteral();
-			r.comment="C8";
+			r.comment = "C8";
 			constraints.add(r);
 		}
 		else if (n.f0.choice instanceof Identifier)
@@ -274,17 +300,4 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 
 		super.visit(n, argu);
 	}
-//
-//	@Override
-//	public void visit(PrimaryExpression n, Location argu)
-//	{
-//		if (n.f0.choice instanceof Identifier)
-//			variables.add(new VariableRes(n, argu));
-//		else if (n.f0.choice instanceof NotExpression)
-//			variables.add(new VariableRes(n, argu));
-//		else if (n.f0.choice instanceof BracketExpression)
-//			variables.add(new VariableRes(n, argu));
-//
-//		super.visit(n, argu);
-//	}
 }

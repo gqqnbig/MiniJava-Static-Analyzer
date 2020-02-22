@@ -1,6 +1,7 @@
 import org.junit.Assert;
 import org.junit.Test;
 import syntaxtree.Goal;
+import syntaxtree.PrimaryExpression;
 import typeAnalysis.ClassHierarchyAnalysis;
 
 import java.io.FileInputStream;
@@ -16,7 +17,7 @@ public class ChaTest
 		Goal goal = MiniJavaParser.Goal();
 		ClassHierarchyAnalysis.init(goal);
 
-		var types = ClassHierarchyAnalysis.getPossibleTypes(null, "get", 2);
+		var types = ClassHierarchyAnalysis.getPossibleTypes((PrimaryExpression) null, "get", 2);
 		Assert.assertTrue(types.contains("A"));
 		Assert.assertEquals(1, types.size());
 	}

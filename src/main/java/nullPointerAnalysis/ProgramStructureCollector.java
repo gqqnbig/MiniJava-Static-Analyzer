@@ -14,6 +14,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	//	static HashMap<Tuple, Location> lastStatementData;
 //	static HashMap<Tuple, Location> firstStatementData;
 	static HashMap<Tuple, ArrayList<Location>> statementOrderData;
+	static HashMap<Tuple, Expression> returnExpressions;
 //	static HashMap<Tuple, ObjectIdentifierDefinition> methodParameterInfos;
 
 //region static methods
@@ -130,6 +131,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	{
 		objects = new ArrayList<>();
 		statementOrderData = new HashMap<>();
+		returnExpressions = new HashMap<>();
 	}
 
 	public static List<Location> getSuccessors(String className, String methodName, Location location)
@@ -139,6 +141,11 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		int i = java.util.Collections.binarySearch(list, location);
 		assert i >= 0;
 		return list.subList(i + 1, list.size());
+	}
+
+	public static Expression getReturnExpression(String className, String methodName)
+	{
+		return returnExpressions.get(new Tuple(className, methodName));
 	}
 
 
@@ -194,6 +201,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 
 		Location returnStatement = new Location(n.f9);
 		statementOrderData.get(key).add(returnStatement);
+		returnExpressions.put(key, n.f10);
 //		Tuple key = new Tuple();
 //		key.item1 = getClassName();
 //		key.item2 = getMethodName();
