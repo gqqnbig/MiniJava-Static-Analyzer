@@ -225,20 +225,20 @@ public class ExpressionToStringVisitor extends GJDepthFirst<String, Object>
 		return n.f0.accept(this, argu) + ".length";
 	}
 
-//	@Override
-//	public String visit(ExpressionList n, Object argu)
-//	{
-//		String a = n.f0.accept(this, argu);
-//		String b = n.f1.accept(this, argu);
-//		if (b == null)
-//			return a;
-//		else
-//			return a + b;
-//	}
-//
-//	@Override
-//	public String visit(ExpressionRest n, Object argu)
-//	{
-//		return ", " + n.f1.accept(this, argu);
-//	}
+	@Override
+	public String visit(ExpressionList n, Object argu)
+	{
+		String a = n.f0.accept(this, argu);
+		String b = n.f1.accept(this, argu);
+		if (b == null)
+			return a;
+		else
+			return a + b;
+	}
+
+	@Override
+	public String visit(ExpressionRest n, Object argu)
+	{
+		return ", " + n.f1.accept(this, argu);
+	}
 }
