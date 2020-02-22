@@ -48,7 +48,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			{
 				EqualityRelationship r = new EqualityRelationship();
 				r.left = new VariableIn(nullable, returnLocation);
-				r.right = new PossibleNullLiteral();
+				r.right = PossibleNullLiteral.instance;
 				constraints.add(r);
 			}
 		}
@@ -80,7 +80,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			{
 				EqualityRelationship r = new EqualityRelationship();
 				r.left = new VariableIn(nullable, location);
-				r.right = new PossibleNullLiteral();
+				r.right = PossibleNullLiteral.instance;
 				constraints.add(r);
 			}
 		}
@@ -264,7 +264,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		{
 			EqualityRelationship r = new EqualityRelationship();
 			r.left = new VariableRes((AllocationExpression) n.f0.choice, argu);
-			r.right = new NotNullLiteral();
+			r.right = NotNullLiteral.instance;
 			r.comment = "C8";
 			constraints.add(r);
 		}

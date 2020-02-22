@@ -59,12 +59,12 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	}
 
 
-//	@Override
-//	public void visit(MessageSend n, Location argu)
-//	{
-//		variables.add(new VariableRes(n,argu));
-//		super.visit(n, argu);
-//	}
+	@Override
+	public void visit(MessageSend n, Location argu)
+	{
+		variables.add(new VariableRes(n,argu));
+		super.visit(n, argu);
+	}
 
 	@Override
 	public void visit(Statement n, Location argu)
