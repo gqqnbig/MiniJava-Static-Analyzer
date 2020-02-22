@@ -67,21 +67,6 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		n.f6.accept(this, null);
 	}
 
-//	@Override
-//	public void visit(VarDeclaration n, Location argu)
-//	{
-//		if (NullableCollector.isNullable(n.f0) == false)
-//			return;
-//
-////		assert NullableCollector.nullables.containsKey(n.f1);
-//
-//		VariableIn vIn = new VariableIn(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
-//		variables.add(vIn);
-//
-//		VariableOut vOut = new VariableOut(new ObjectIdentifierDefinition(n.f1, getClassName(), getMethodName(), false), new Location(n));
-//		variables.add(vOut);
-//	}
-
 	@Override
 	public void visit(Statement n, Location argu)
 	{
@@ -168,6 +153,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 				Expression argument = arguments.get(i);
 				EqualityRelationship r = new EqualityRelationship();
 				r.left = new VariableRes(argument, location);
+				r.comment = "C6";
 
 				UnionFunction union = new UnionFunction();
 				for (var type : possibleTypes)
@@ -235,25 +221,59 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		}
 	}
 
-	@Override
-	public void visit(AllocationExpression n, Location argu)
-	{
-		EqualityRelationship r = new EqualityRelationship();
-		r.left = new VariableRes(n, argu);
-		r.right = new NotNullLiteral();
-		constraints.add(r);
-	}
-
-	//	@Override
-//	public void visit(Expression n, Location argu)
+//	@Override
+//	public void visit(AllocationExpression n, Location argu)
 //	{
-//		assert argu != null;
-//
-//		VariableRes vRes = new VariableRes(n, argu);
-//		variables.add(vRes);
-//
-//		super.visit(n, argu);
+//		EqualityRelationship r = new EqualityRelationship();
+//		r.left = new VariableRes(n, argu);
+//		r.right = new NotNullLiteral();
+//		r.comment="C8";
+//		constraints.add(r);
 //	}
+
+	@Override
+	public void visit(PrimaryExpression n, Location argu)
+	{
+		if (n.f0.choice instanceof AllocationExpression)
+		{
+			EqualityRelationship r = new EqualityRelationship();
+			r.left = new VariableRes((AllocationExpression) n.f0.choice, argu);
+			r.right = new NotNullLiteral();
+			r.comment="C8";
+			constraints.add(r);
+		}
+		else if (n.f0.choice instanceof Identifier)
+		{
+			String identifierName = ((Identifier) n.f0.choice).f0.toString();
+			var localVariable = nullablesInScope.stream().filter(o -> o.getIdentifier().equals(identifierName) && o.Method != null).findAny();
+			if (localVariable.isPresent())
+			{
+				VariableRes vRes = new VariableRes(n, argu);
+				VariableIn vIn = new VariableIn(localVariable.get(), argu);
+				EqualityRelationship r = new EqualityRelationship();
+				r.left = vRes;
+				r.right = vIn;
+				constraints.add(r);
+			}
+			else
+			{
+				var field = nullablesInScope.stream().filter(o -> o.getIdentifier().equals(identifierName)).findAny();
+				if (field.isPresent())
+				{
+					VariableRes vRes = new VariableRes(n, argu);
+					VariableIn vIn = new VariableIn(field.get(), argu);
+					EqualityRelationship r = new EqualityRelationship();
+					r.comment = "C9";
+					r.left = vRes;
+					r.right = vIn;
+					constraints.add(r);
+				}
+			}
+		}
+
+
+		super.visit(n, argu);
+	}
 //
 //	@Override
 //	public void visit(PrimaryExpression n, Location argu)

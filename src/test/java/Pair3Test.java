@@ -34,5 +34,9 @@ public class Pair3Test
 
 		Assert.assertTrue("res[new X(), n] is missing",
 				constraintCollector.constraints.stream().anyMatch(c -> c.left instanceof VariableRes && ((VariableRes) c.left).getInput().contains("new X()")));
+
+		Assert.assertTrue("res[x, n]=in[x,n] is missing",
+				constraintCollector.constraints.stream().anyMatch(c -> c.left instanceof VariableRes && ((VariableRes) c.left).getStatement().getLine() == 16 &&
+						c.right instanceof VariableIn && ((VariableIn) c.right).getStatement().getLine() == 16 && ((VariableIn) c.right).getInput().getIdentifier().equals("x")));
 	}
 }

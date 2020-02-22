@@ -2,6 +2,8 @@ package nullPointerAnalysis;
 
 public class EqualityRelationship extends math.EqualityRelationship<AnalysisResult>
 {
+	public String comment;
+
 	public EqualityRelationship()
 	{
 	}
@@ -15,6 +17,13 @@ public class EqualityRelationship extends math.EqualityRelationship<AnalysisResu
 	@Override
 	public String toString()
 	{
-		return left.toString() + " = " + right.toString();
+		String s;
+		if (comment == null)
+			s = "";
+		else
+			s = String.format("%3s, ", comment);
+		return s + left.toString() + " = " + right.toString();
 	}
+
+
 }
