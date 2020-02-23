@@ -4,12 +4,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import syntaxtree.Goal;
 import typeAnalysis.ClassHierarchyAnalysis;
+import utils.FlowSensitiveVariable;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 public class VariablesTest
 {
@@ -97,5 +100,22 @@ public class VariablesTest
 			Assert.assertTrue(r + " is invalid", r.left.equals(r.right) == false);
 
 		}
+	}
+
+	@Test
+	public void testManyBrackets() throws FileNotFoundException, ParseException
+	{
+		FileInputStream stream = new FileInputStream("testcases/hw2/NullCheckSimple.java");
+		try {MiniJavaParser.ReInit(stream);} catch (Throwable e) {new MiniJavaParser(stream);}
+		Goal goal = MiniJavaParser.Goal();
+
+		ProgramStructureCollector.init(goal);
+		ClassHierarchyAnalysis.init(goal);
+		VariableCollector variableCollector = new VariableCollector();
+		goal.accept(variableCollector, null);
+
+		var set = new HashSet<>(variableCollector.variables);
+		Assert.assertEquals("Collected variables should not have duplicates.\n" + variableCollector.variables.stream().map(FlowSensitiveVariable::toString).collect(Collectors.joining("\n")),
+				set.size(), variableCollector.variables.size());
 	}
 }
