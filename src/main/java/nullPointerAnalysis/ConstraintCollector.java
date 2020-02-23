@@ -137,7 +137,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			VariableOut vOut = new VariableOut(assignee, location);
 			VariableRes vRes = new VariableRes(n.f2, location);
 
-			constraints.add(new EqualityRelationship(vOut, vRes));
+			constraints.add(new EqualityRelationship(vOut, vRes, "C3"));
 		}
 
 		if (n.f2.f0.choice instanceof MessageSend)
