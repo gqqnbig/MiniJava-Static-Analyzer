@@ -40,10 +40,10 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		n.f8.accept(this, null);
 		assert n.f8.present() == false || isFirstStatement == false : "If method body has statements, isFirstStatement must already be turned off.";
 
+		//return statement
+		Location returnLocation = new Location(n.f9);
 		if (isFirstStatement)
 		{
-			//return statement
-			Location returnLocation = new Location(n.f9);
 			for (ObjectIdentifierDefinition nullable : nullablesInScope)
 			{
 				EqualityRelationship r = new EqualityRelationship();
@@ -52,6 +52,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 				constraints.add(r);
 			}
 		}
+		n.f10.accept(this, returnLocation);
 		isFirstStatement = false;
 	}
 
@@ -102,6 +103,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 				EqualityRelationship r = new EqualityRelationship();
 				r.left = new VariableOut(nullable, location);
 				r.right = union;
+				r.comment = "C7";
 				constraints.add(r);
 			}
 		}
@@ -182,6 +184,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 				EqualityRelationship r = new EqualityRelationship();
 				r.left = new VariableOut(g, location);
 				r.right = new VariableIn(g, location);
+				r.comment = "C4";
 				constraints.add(r);
 			}
 		}

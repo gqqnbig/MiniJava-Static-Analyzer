@@ -1,6 +1,7 @@
 package nullPointerAnalysis;
 
 import syntaxtree.Identifier;
+import utils.Options;
 
 public class ObjectIdentifierDefinition
 {
@@ -47,14 +48,26 @@ public class ObjectIdentifierDefinition
 
 	public String toString()
 	{
-		if (Method == null)
-			return String.format("Field %s defined in %s", identifier, Class);
+		if(Options.shortform)
+		{
+			if (Method == null)
+				return String.format("%2$s.%1$s", identifier, Class);
 
-		if (parameterIndex >= 0)
-			return String.format("Parameter %s defined in %s.%s", identifier, Class, Method);
+			if (parameterIndex >= 0)
+				return String.format("%2$s.%3$s#%1$s", identifier, Class, Method);
 
-		return String.format("Variable %s defined in %s.%s", identifier, Class, Method);
+			return String.format("%2$s.%3$s.%1$s", identifier, Class, Method);
+		}
+		else
+		{
+			if (Method == null)
+				return String.format("Field %s defined in %s", identifier, Class);
 
+			if (parameterIndex >= 0)
+				return String.format("Parameter %s defined in %s.%s", identifier, Class, Method);
+
+			return String.format("Variable %s defined in %s.%s", identifier, Class, Method);
+		}
 	}
 
 }

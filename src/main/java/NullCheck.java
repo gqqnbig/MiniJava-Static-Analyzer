@@ -3,6 +3,7 @@ import nullPointerAnalysis.ProgramStructureCollector;
 import syntaxtree.*;
 import typeAnalysis.ClassHierarchyAnalysis;
 import utils.FlowSensitiveVariable;
+import utils.Options;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -29,6 +30,8 @@ public class NullCheck
 			debugOut = System.out;
 			System.setOut(nullOutputStream);
 		}
+		Options.shortform = Arrays.asList(args).contains("--short-form");
+
 
 		//the constructor sets static fields which affects the static Goal method.
 		new MiniJavaParser(System.in);
