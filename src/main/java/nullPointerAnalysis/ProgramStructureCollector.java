@@ -134,7 +134,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		ArrayList<Location> list = statementOrderData.get(new Tuple(className, methodName));
 		int i = java.util.Collections.binarySearch(list, location);
 		assert i >= 0;
-		return list.subList(i + 1, list.size());
+		return list.subList(i + 1, Math.min(i + 2, list.size()));
 	}
 
 	public static Expression getReturnExpression(String className, String methodName)
