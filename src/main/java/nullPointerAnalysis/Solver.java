@@ -133,6 +133,8 @@ public class Solver
 			for (int i = 0; i < constraints.size(); i++)
 			{
 				EqualityRelationship r = constraints.get(i);
+				if (r.right instanceof Literal)
+					continue;
 
 				Literal<AnalysisResult> rightL = null;
 				if (r.right instanceof FlowSensitiveNullPointerAnalysisVariable)
