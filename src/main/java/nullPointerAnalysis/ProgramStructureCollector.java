@@ -104,7 +104,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 
 	public static Location getLastStatement(String className, String methodName)
 	{
-		var list = statementOrderData.get(new Tuple(className, methodName));
+		ArrayList<JumpInfo> list = statementOrderData.get(new Tuple(className, methodName));
 		return list.get(list.size() - 1).location;
 	}
 
