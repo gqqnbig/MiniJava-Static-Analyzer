@@ -13,7 +13,8 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	static ArrayList<ObjectIdentifierDefinition> objects;
 	//	static HashMap<Tuple, Location> lastStatementData;
 //	static HashMap<Tuple, Location> firstStatementData;
-	static HashMap<Tuple, ArrayList<Location>> statementOrderData;
+	static HashMap<Tuple, ArrayList<JumpInfo>> statementOrderData;
+	//	static HashMap<Location, Integer> additionalJumps;
 	static HashMap<Tuple, Expression> returnExpressions;
 //	static HashMap<Tuple, ObjectIdentifierDefinition> methodParameterInfos;
 
@@ -98,13 +99,13 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public static Location getFirstStatement(String className, String methodName)
 	{
 //		return null;
-		return statementOrderData.get(new Tuple(className, methodName)).get(0);
+		return statementOrderData.get(new Tuple(className, methodName)).get(0).location;
 	}
 
 	public static Location getLastStatement(String className, String methodName)
 	{
-		ArrayList<Location> list = statementOrderData.get(new Tuple(className, methodName));
-		return list.get(list.size() - 1);
+		var list = statementOrderData.get(new Tuple(className, methodName));
+		return list.get(list.size() - 1).location;
 	}
 
 	/**
@@ -131,10 +132,40 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public static List<Location> getSuccessors(String className, String methodName, Location location)
 	{
 		assert location != null : "Parameter location cannot be null.";
-		ArrayList<Location> list = statementOrderData.get(new Tuple(className, methodName));
-		int i = java.util.Collections.binarySearch(list, location);
+		ArrayList<JumpInfo> list = statementOrderData.get(new Tuple(className, methodName));
+		int i = java.util.Collections.binarySearch(list, location, new Comparator<Object>()
+		{
+			@Override
+			public int compare(Object o1, Object o2)
+			{
+				Location l1 = null;
+				if (o1 instanceof JumpInfo)
+					l1 = ((JumpInfo) o1).location;
+				else if (o1 instanceof Location)
+					l1 = (Location) o1;
+
+				Location l2 = null;
+				if (o2 instanceof JumpInfo)
+					l2 = ((JumpInfo) o2).location;
+				else if (o2 instanceof Location)
+					l2 = (Location) o2;
+
+				assert l1 != null;
+				assert l2 != null;
+				return l1.compareTo(l2);
+			}
+		});
 		assert i >= 0;
-		return list.subList(i + 1, Math.min(i + 2, list.size()));
+
+		ArrayList<Location> result = new ArrayList<>();
+		JumpInfo item = list.get(i);
+		if (item.noNext == false && i + 1 < list.size())
+			result.add(list.get(i + 1).location);
+
+		if (item.additionalJump >= 0 && item.additionalJump < list.size())
+			result.add(list.get(item.additionalJump).location);
+
+		return result;
 	}
 
 	public static Expression getReturnExpression(String className, String methodName)
@@ -194,7 +225,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 
 
 		Location returnStatement = new Location(n.f9);
-		statementOrderData.get(key).add(returnStatement);
+		statementOrderData.get(key).add(new JumpInfo(returnStatement));
 		returnExpressions.put(key, n.f10);
 //		Tuple key = new Tuple();
 //		key.item1 = getClassName();
@@ -250,7 +281,30 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 //		lastStatement = new Location(n);
 //		if (firstStatement == null)
 //			firstStatement = lastStatement;
-		statementOrderData.get(new Tuple(getClassName(), getMethodName())).add(new Location(n));
+		JumpInfo jump = new JumpInfo(new Location(n));
+		ArrayList<JumpInfo> data = statementOrderData.get(new Tuple(getClassName(), getMethodName()));
+		int jumpIndex = data.size();
+		data.add(jump);
+
+		if (n.f0.choice instanceof IfStatement)
+		{
+			IfStatement ifStatement = ((IfStatement) n.f0.choice);
+			ifStatement.f4.accept(this);
+
+			jump.additionalJump = data.size();
+			ifStatement.f6.accept(this);
+
+		}
+		else if (n.f0.choice instanceof WhileStatement)
+		{
+			WhileStatement whileStatement = (WhileStatement) n.f0.choice;
+			jump.additionalJump = data.size();
+			whileStatement.f4.accept(this);
+
+			assert jump != data.get(data.size() - 1);
+			data.get(data.size() - 1).noNext = true;
+			data.get(data.size() - 1).additionalJump = jumpIndex;
+		}
 
 		return null;
 //		return super.visit(n);
@@ -287,5 +341,17 @@ class Tuple
 	public int hashCode()
 	{
 		return Objects.hash(item1, item2);
+	}
+}
+
+class JumpInfo
+{
+	public Location location;
+	public boolean noNext = false;
+	public int additionalJump = -1;
+
+	public JumpInfo(Location location)
+	{
+		this.location = location;
 	}
 }
