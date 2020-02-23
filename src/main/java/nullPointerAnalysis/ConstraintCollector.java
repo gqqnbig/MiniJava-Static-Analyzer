@@ -12,6 +12,7 @@ import utils.Scope;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 public class ConstraintCollector extends VoidScopeVisitor<Location>
 {
@@ -146,7 +147,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			ArgumentsCollector argumentsCollector = new ArgumentsCollector();
 			((MessageSend) (n.f2.f0.choice)).f4.accept(argumentsCollector);
 			ArrayList<Expression> arguments = argumentsCollector.arguments;
-			var possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName, arguments.size());
+			Collection<String> possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName, arguments.size());
 			assert possibleTypes != null && possibleTypes.size() > 0;
 
 			getConstraint5(location, assignee, methodName, possibleTypes);
@@ -160,7 +161,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 				r.comment = "C6";
 
 				UnionFunction union = new UnionFunction();
-				for (var type : possibleTypes)
+				for (String type : possibleTypes)
 				{
 					ObjectIdentifierDefinition parameter = ProgramStructureCollector.getParameter(type, methodName, i);
 					if (parameter != null)
@@ -178,7 +179,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		}
 		else
 		{
-			for (var g : nullablesInScope)
+			for (ObjectIdentifierDefinition g : nullablesInScope)
 			{
 				if (g.equals(assignee))
 					continue;
@@ -206,7 +207,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	 */
 	private void getConstraint5(Location argu, ObjectIdentifierDefinition assignee, String methodName, Collection<String> possibleTypes)
 	{
-		for (var g : nullablesInScope)
+		for (ObjectIdentifierDefinition g : nullablesInScope)
 		{
 			if (g.equals(assignee))
 				continue;
@@ -249,7 +250,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		ArgumentsCollector argumentsCollector = new ArgumentsCollector();
 		n.f4.accept(argumentsCollector);
 		String methodName = n.f2.f0.toString();
-		var possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName, argumentsCollector.arguments.size());
+		Collection<String> possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName, argumentsCollector.arguments.size());
 		for (String type : possibleTypes)
 		{
 			VariableRes vRes = new VariableRes(ProgramStructureCollector.getReturnExpression(type, methodName), ProgramStructureCollector.getLastStatement(type, methodName));
@@ -276,7 +277,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		else if (n.f0.choice instanceof Identifier)
 		{
 			String identifierName = ((Identifier) n.f0.choice).f0.toString();
-			var localVariable = nullablesInScope.stream().filter(o -> o.getIdentifier().equals(identifierName) && o.Method != null).findAny();
+			Optional<ObjectIdentifierDefinition> localVariable = nullablesInScope.stream().filter(o -> o.getIdentifier().equals(identifierName) && o.Method != null).findAny();
 			if (localVariable.isPresent())
 			{
 				VariableRes vRes = new VariableRes(n, argu);
@@ -288,7 +289,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			}
 			else
 			{
-				var field = nullablesInScope.stream().filter(o -> o.getIdentifier().equals(identifierName)).findAny();
+				Optional<ObjectIdentifierDefinition> field = nullablesInScope.stream().filter(o -> o.getIdentifier().equals(identifierName)).findAny();
 				if (field.isPresent())
 				{
 					VariableRes vRes = new VariableRes(n, argu);

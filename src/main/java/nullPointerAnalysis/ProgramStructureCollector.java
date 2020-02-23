@@ -78,7 +78,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public static ObjectIdentifierDefinition getDefinition(Identifier identifier, Scope scope)
 	{
 		ObjectIdentifierDefinition fieldDefinition = null;
-		for (var d : getNullableIdentifiersInScope(scope))
+		for (ObjectIdentifierDefinition d : getNullableIdentifiersInScope(scope))
 		{
 			if (d.getIdentifier().equals(identifier.f0.toString()))
 			{
@@ -115,7 +115,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	 */
 	public static ObjectIdentifierDefinition getParameter(String className, String methodName, int parameterIndex)
 	{
-		var parameter = objects.stream().filter(o -> o.parameterIndex == parameterIndex && o.Class.equals(className) && Objects.equals(o.Method, methodName)).findAny();
+		Optional<ObjectIdentifierDefinition> parameter = objects.stream().filter(o -> o.parameterIndex == parameterIndex && o.Class.equals(className) && Objects.equals(o.Method, methodName)).findAny();
 		// parameter may be null if the parameter is not object, eg. int.
 		if (parameter.isEmpty())
 			return null;

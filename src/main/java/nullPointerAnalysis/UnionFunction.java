@@ -50,7 +50,7 @@ public class UnionFunction implements FunctionUnion<AnalysisResult>, AnalysisRes
 			return "∅";
 
 		StringBuilder sb = new StringBuilder();
-		for (var element : inputArray)
+		for (AnalysisResult element : inputArray)
 			sb.append(element).append(" ∪ ");
 
 		sb.delete(sb.length() - 2, sb.length());
