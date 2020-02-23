@@ -2,7 +2,6 @@ package nullPointerAnalysis;
 
 import math.FunctionUnion;
 import math.Literal;
-import typeAnalysis.Solver;
 
 import java.util.ArrayList;
 import java.util.Collection;

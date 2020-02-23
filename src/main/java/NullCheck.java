@@ -1,7 +1,7 @@
 import nullPointerAnalysis.*;
 import syntaxtree.*;
 import typeAnalysis.ClassHierarchyAnalysis;
-import typeAnalysis.Solver;
+import nullPointerAnalysis.Solver;
 import utils.FlowSensitiveVariable;
 import utils.Options;
 
@@ -49,9 +49,9 @@ public class NullCheck
 			debugOut.println(variable);
 		}
 		if (Solver.checkNullPointer(goal, debugOut))
-			System.out.println("Has at least one access that may be to a null pointer");
-		else
-			System.out.println("Has no null-pointer problems");
+			System.out.println("null pointer error");
+//		else
+//			System.out.println("Has no null-pointer problems");
 
 	}
 

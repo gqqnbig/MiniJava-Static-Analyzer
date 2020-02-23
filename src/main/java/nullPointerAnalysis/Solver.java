@@ -1,8 +1,9 @@
-package typeAnalysis;
+package nullPointerAnalysis;
 
+import baseVisitors.ArrayLookupVisitor;
 import baseVisitors.MessageSendCollector;
 import math.Literal;
-import nullPointerAnalysis.*;
+import syntaxtree.ArrayLookup;
 import syntaxtree.Goal;
 import syntaxtree.MessageSend;
 
@@ -35,6 +36,13 @@ public class Solver
 	}
 
 
+	/**
+	 * return true if the program may throw null pointer exception.
+	 *
+	 * @param goal
+	 * @param debugOut
+	 * @return
+	 */
 	public static boolean checkNullPointer(Goal goal, PrintStream debugOut)
 	{
 		ConstraintCollector constraintCollector = new ConstraintCollector();
@@ -64,6 +72,17 @@ public class Solver
 				return true;
 			}
 		}
+
+		ArrayLookupVisitor arrayLookupVisitor = new ArrayLookupVisitor();
+		goal.accept(arrayLookupVisitor);
+		for (ArrayLookup al : arrayLookupVisitor.arrayLookups)
+		{
+			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == al.f0 && r.right == PossibleNullLiteral.instance))
+			{
+				return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -80,7 +99,7 @@ public class Solver
 		}
 	}
 
-		public static ArrayList<EqualityRelationship> solve(List<EqualityRelationship> constraints)
+	public static ArrayList<EqualityRelationship> solve(List<EqualityRelationship> constraints)
 	{
 		HashSet<EqualityRelationship> workingset = new HashSet<>(constraints);
 

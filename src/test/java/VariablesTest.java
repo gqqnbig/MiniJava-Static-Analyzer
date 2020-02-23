@@ -5,8 +5,11 @@ import org.junit.Test;
 import syntaxtree.Goal;
 import typeAnalysis.ClassHierarchyAnalysis;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class VariablesTest
 {
@@ -54,6 +57,13 @@ public class VariablesTest
 	@Test
 	public void testPair8() throws ParseException, FileNotFoundException
 	{
+		Path currentRelativePath = Paths.get("testcases/hw2/pair8.java");
+		String s = currentRelativePath.toAbsolutePath().toString();
+		File f=new File(s);
+		System.out.println(f.exists());
+
+
+
 		FileInputStream stream = new FileInputStream("testcases/hw2/pair8.java");
 		MiniJavaParser.ReInit(stream);
 //		new MiniJavaParser(stream);

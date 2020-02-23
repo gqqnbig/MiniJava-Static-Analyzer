@@ -1,7 +1,6 @@
 package nullPointerAnalysis;
 
 import math.Literal;
-import typeAnalysis.Solver;
 import utils.FlowSensitiveVariable;
 import utils.Location;
 import math.Variable;

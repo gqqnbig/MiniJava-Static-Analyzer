@@ -5,7 +5,7 @@ import org.junit.Test;
 import syntaxtree.Goal;
 import syntaxtree.MessageSend;
 import typeAnalysis.ClassHierarchyAnalysis;
-import typeAnalysis.Solver;
+import nullPointerAnalysis.Solver;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

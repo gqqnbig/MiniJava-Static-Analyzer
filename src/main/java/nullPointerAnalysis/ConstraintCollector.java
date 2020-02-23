@@ -2,11 +2,9 @@ package nullPointerAnalysis;
 
 import baseVisitors.ArgumentsCollector;
 import baseVisitors.VoidScopeVisitor;
-import nullPointerAnalysis.*;
 import syntaxtree.*;
 import typeAnalysis.ClassHierarchyAnalysis;
 import utils.Location;
-import nullPointerAnalysis.PossibleNullLiteral;
 import utils.Scope;
 
 import java.util.ArrayList;
@@ -55,6 +53,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 				constraints.add(r);
 			}
 		}
+		addC4(returnLocation, null);
 		n.f10.accept(this, returnLocation);
 		isFirstStatement = false;
 	}
@@ -150,7 +149,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			Collection<String> possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName, arguments.size());
 			assert possibleTypes != null && possibleTypes.size() > 0;
 
-			getConstraint5(location, assignee, methodName, possibleTypes);
+			addC5(location, assignee, methodName, possibleTypes);
 
 
 			for (int i = 0; i < arguments.size(); i++)
@@ -179,21 +178,26 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		}
 		else
 		{
-			for (ObjectIdentifierDefinition g : nullablesInScope)
-			{
-				if (g.equals(assignee))
-					continue;
-
-				EqualityRelationship r = new EqualityRelationship();
-				r.left = new VariableOut(g, location);
-				r.right = new VariableIn(g, location);
-				r.comment = "C4";
-				constraints.add(r);
-			}
+			addC4(location, assignee);
 		}
 
 
 		n.f2.accept(this, location);
+	}
+
+	private void addC4(Location location, ObjectIdentifierDefinition assignee)
+	{
+		for (ObjectIdentifierDefinition g : nullablesInScope)
+		{
+			if (g.equals(assignee))
+				continue;
+
+			EqualityRelationship r = new EqualityRelationship();
+			r.left = new VariableOut(g, location);
+			r.right = new VariableIn(g, location);
+			r.comment = "C4";
+			constraints.add(r);
+		}
 	}
 
 	/**
@@ -205,7 +209,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	 * @param methodName
 	 * @param possibleTypes
 	 */
-	private void getConstraint5(Location argu, ObjectIdentifierDefinition assignee, String methodName, Collection<String> possibleTypes)
+	private void addC5(Location argu, ObjectIdentifierDefinition assignee, String methodName, Collection<String> possibleTypes)
 	{
 		for (ObjectIdentifierDefinition g : nullablesInScope)
 		{
@@ -223,6 +227,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 				union.getInput().add(new VariableOut(g, ProgramStructureCollector.getLastStatement(className, methodName)));
 			}
 			r.right = union;
+			r.comment = "C5";
 			constraints.add(r);
 		}
 	}
