@@ -15,10 +15,6 @@ class A {
     int[] f;
     int[] nullField;
 
-    public int[] getF() {
-        return f;
-    }
-
     public int deinitF() {
         f = nullField;
         return 0;
@@ -26,7 +22,6 @@ class A {
 
     public int n() {
         int t;
-        int[] ta;
         f = new int[5];
         t = this.deinitF();
         t = f[2];
