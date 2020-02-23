@@ -117,10 +117,10 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	{
 		Optional<ObjectIdentifierDefinition> parameter = objects.stream().filter(o -> o.parameterIndex == parameterIndex && o.Class.equals(className) && Objects.equals(o.Method, methodName)).findAny();
 		// parameter may be null if the parameter is not object, eg. int.
-		if (parameter.isEmpty())
-			return null;
-		else
+		if (parameter.isPresent())
 			return parameter.get();
+		else
+			return null;
 	}
 	//endregion
 
