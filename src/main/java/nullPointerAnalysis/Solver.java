@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Solver
 {
@@ -59,7 +60,7 @@ public class Solver
 		//Clear up single union
 		Solver.clearUpSingleUnion(constraintCollector.constraints);
 
-		ArrayList<EqualityRelationship> solutions = solve(constraintCollector.constraints);
+		List<EqualityRelationship> solutions = solve(constraintCollector.constraints);
 		debugOut.println("\nSolutions:");
 		for (EqualityRelationship r : solutions)
 		{
@@ -68,6 +69,8 @@ public class Solver
 
 		MessageSendCollector messageSendCollector = new MessageSendCollector();
 		goal.accept(messageSendCollector);
+
+		solutions = solutions.stream().filter(r -> r.left instanceof VariableRes).collect(Collectors.toList());
 		for (MessageSend ms : messageSendCollector.messageSends)
 		{
 			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == ms.f0 && r.right == PossibleNullLiteral.instance))
@@ -112,6 +115,11 @@ public class Solver
 		}
 	}
 
+	/**
+	 * Return literal solution of all variables, ie. VariableIn, VariableOut, VariableRes.
+	 * @param constraints
+	 * @return
+	 */
 	public static ArrayList<EqualityRelationship> solve(List<EqualityRelationship> constraints)
 	{
 		HashSet<EqualityRelationship> workingset = new HashSet<>(constraints);
@@ -164,10 +172,10 @@ public class Solver
 		{
 			if (r.left instanceof VariableRes && r.right instanceof Literal)
 				solutions.add(r);
-//			if(r.left instanceof VariableOut && r.right instanceof Literal)
-//				solutions.add(r);
-//			if(r.left instanceof VariableIn && r.right instanceof Literal)
-//				solutions.add(r);
+			if(r.left instanceof VariableOut && r.right instanceof Literal)
+				solutions.add(r);
+			if(r.left instanceof VariableIn && r.right instanceof Literal)
+				solutions.add(r);
 		}
 
 		return solutions;

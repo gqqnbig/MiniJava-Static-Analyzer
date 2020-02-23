@@ -10,6 +10,8 @@ import nullPointerAnalysis.Solver;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class SimpleTest
 {
@@ -38,7 +40,9 @@ public class SimpleTest
 
 		//Clear up single union
 		Solver.clearUpSingleUnion(constraintCollector.constraints);
-		ArrayList<EqualityRelationship> solutions = Solver.solve(constraintCollector.constraints);
+		List<EqualityRelationship> solutions = Solver.solve(constraintCollector.constraints);
+
+		solutions = solutions.stream().filter(r -> r.left instanceof VariableRes).collect(Collectors.toList());
 		MessageSendCollector messageSendCollector = new MessageSendCollector();
 
 		goal.accept(messageSendCollector);

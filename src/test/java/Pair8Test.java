@@ -13,6 +13,8 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Pair8Test
 {
@@ -33,7 +35,8 @@ public class Pair8Test
 		//Clear up single union
 		Solver.clearUpSingleUnion(constraintCollector.constraints);
 
-		ArrayList<EqualityRelationship> solutions = Solver.solve(constraintCollector.constraints);
+		List<EqualityRelationship> solutions = Solver.solve(constraintCollector.constraints);
+		solutions = solutions.stream().filter(r -> r.left instanceof VariableRes).collect(Collectors.toList());
 
 		Assert.assertTrue("res[nullField, L19] = M is missing",
 				solutions.stream().anyMatch(c -> ((VariableRes) c.left).getInput().startsWith("nullField@") && c.right == PossibleNullLiteral.instance));
