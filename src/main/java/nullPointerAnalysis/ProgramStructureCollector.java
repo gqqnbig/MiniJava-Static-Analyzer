@@ -278,9 +278,10 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	@Override
 	public Object visit(Statement n)
 	{
-//		lastStatement = new Location(n);
-//		if (firstStatement == null)
-//			firstStatement = lastStatement;
+		if (n.f0.choice instanceof Block)
+			return n.f0.accept(this);
+
+
 		JumpInfo jump = new JumpInfo(new Location(n));
 		ArrayList<JumpInfo> data = statementOrderData.get(new Tuple(getClassName(), getMethodName()));
 		int jumpIndex = data.size();
@@ -301,8 +302,8 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		else if (n.f0.choice instanceof WhileStatement)
 		{
 			WhileStatement whileStatement = (WhileStatement) n.f0.choice;
-			jump.additionalJump = data.size();
 			whileStatement.f4.accept(this);
+			jump.additionalJump = data.size();
 
 			assert jump != data.get(data.size() - 1);
 			data.get(data.size() - 1).noNext = true;
