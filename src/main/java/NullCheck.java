@@ -1,5 +1,5 @@
-import nullPointerAnalysis.EqualityRelationship;
-import nullPointerAnalysis.ProgramStructureCollector;
+import baseVisitors.MessageSendCollector;
+import nullPointerAnalysis.*;
 import syntaxtree.*;
 import typeAnalysis.ClassHierarchyAnalysis;
 import utils.FlowSensitiveVariable;
@@ -7,7 +7,9 @@ import utils.Options;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class NullCheck
 {
@@ -56,5 +58,34 @@ public class NullCheck
 		{
 			debugOut.println(r);
 		}
+
+		//Clear up single union
+		for (EqualityRelationship r : constraintCollector.constraints)
+		{
+			if (r.right instanceof UnionFunction && ((UnionFunction) r.right).getInput().size() < 2)
+			{
+				List<AnalysisResult> input = ((UnionFunction) r.right).getInput();
+				assert input.size() != 0;
+				r.right = input.get(0);
+			}
+		}
+
+		ArrayList<EqualityRelationship> solutions = Solver.solve(constraintCollector.constraints);
+		debugOut.println("\nSolutions:");
+		for (EqualityRelationship r : solutions)
+		{
+			debugOut.println(r);
+		}
+
+		MessageSendCollector messageSendCollector = new MessageSendCollector();
+		for (MessageSend ms : messageSendCollector.messageSends)
+		{
+			if(solutions.stream().anyMatch(r->((VariableRes)r.left).getExpression()==ms.f0 && r.right==PossibleNullLiteral.instance))
+			{
+				System.out.println("Has at least one access that may be to a null pointer");
+				return;
+			}
+		}
+		System.out.println("Has no null-pointer problems");
 	}
 }

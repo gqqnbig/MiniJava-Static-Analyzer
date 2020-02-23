@@ -1,9 +1,12 @@
 package nullPointerAnalysis;
 
+import math.Literal;
+import typeAnalysis.SolverHelper;
 import utils.FlowSensitiveVariable;
 import utils.Location;
 import math.Variable;
 
+import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -40,6 +43,16 @@ public abstract class FlowSensitiveNullPointerAnalysisVariable<TInput> implement
 	{
 		return input;
 	}
+
+	public Literal<AnalysisResult> getReturnValue(Collection<EqualityRelationship> constraints)
+	{
+		if (constraints.stream().anyMatch(e -> SolverHelper.findLiteral(this, constraints) == PossibleNullLiteral.instance))
+			return PossibleNullLiteral.instance;
+		if (constraints.stream().anyMatch(e -> SolverHelper.findLiteral(this, constraints) == NotNullLiteral.instance))
+			return NotNullLiteral.instance;
+		return null;
+	}
+
 
 	@Override
 	public String toString()

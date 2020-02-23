@@ -44,4 +44,8 @@ public class VariableRes extends FlowSensitiveNullPointerAnalysisVariable<String
 		return "res";
 	}
 
+	public Node getExpression()
+	{
+		return expression;
+	}
 }
