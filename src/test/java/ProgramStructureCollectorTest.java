@@ -62,5 +62,8 @@ public class ProgramStructureCollectorTest
 
 		Assert.assertTrue("One successor of n==1 is line 6.", successors.stream().anyMatch(l -> l.getLine() == 9));
 		Assert.assertTrue("One successor of n==1 is line 9.", successors.stream().anyMatch(l -> l.getLine() == 13));
+
+		Assert.assertEquals(15, ProgramStructureCollector.getSuccessors("Program", "main", successors.get(0)).get(0).getLine());
+		Assert.assertEquals(15, ProgramStructureCollector.getSuccessors("Program", "main", successors.get(1)).get(0).getLine());
 	}
 }

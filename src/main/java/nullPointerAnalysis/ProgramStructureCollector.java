@@ -290,10 +290,13 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		{
 			IfStatement ifStatement = ((IfStatement) n.f0.choice);
 			ifStatement.f4.accept(this);
+			JumpInfo lastIfTrueJump = data.get(data.size() - 1);
+			lastIfTrueJump.noNext = true;
 
 			jump.additionalJump = data.size();
 			ifStatement.f6.accept(this);
 
+			lastIfTrueJump.additionalJump = data.size();
 		}
 		else if (n.f0.choice instanceof WhileStatement)
 		{
