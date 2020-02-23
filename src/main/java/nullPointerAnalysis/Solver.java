@@ -9,12 +9,11 @@ import syntaxtree.ArrayLength;
 import syntaxtree.ArrayLookup;
 import syntaxtree.Goal;
 import syntaxtree.MessageSend;
+import utils.FlowSensitiveVariable;
+import utils.Options;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class Solver
@@ -57,8 +56,6 @@ public class Solver
 			debugOut.println(r);
 		}
 
-		//Clear up single union
-		Solver.clearUpSingleUnion(constraintCollector.constraints);
 
 		List<EqualityRelationship> solutions = solve(constraintCollector.constraints);
 		debugOut.println("\nSolutions:");
@@ -67,13 +64,18 @@ public class Solver
 			debugOut.println(r);
 		}
 
+		return checkNullPointerException(goal, solutions);
+	}
+
+	public static boolean checkNullPointerException(Goal goal, List<EqualityRelationship> solutions)
+	{
 		MessageSendCollector messageSendCollector = new MessageSendCollector();
 		goal.accept(messageSendCollector);
 
 		solutions = solutions.stream().filter(r -> r.left instanceof VariableRes).collect(Collectors.toList());
 		for (MessageSend ms : messageSendCollector.messageSends)
 		{
-			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == ms.f0 && r.right == PossibleNullLiteral.instance))
+			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == ms.f0.f0.choice && r.right == PossibleNullLiteral.instance))
 			{
 				return true;
 			}
@@ -89,10 +91,10 @@ public class Solver
 			}
 		}
 
-		ArrayLengthVisitor arrayLengthVisitor=new ArrayLengthVisitor();
+		ArrayLengthVisitor arrayLengthVisitor = new ArrayLengthVisitor();
 		goal.accept(arrayLengthVisitor);
 
-		for(ArrayLength al: arrayLengthVisitor.arrayLengths)
+		for (ArrayLength al : arrayLengthVisitor.arrayLengths)
 		{
 			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == al.f0 && r.right == PossibleNullLiteral.instance))
 			{
@@ -102,7 +104,7 @@ public class Solver
 		return false;
 	}
 
-	public static void clearUpSingleUnion(Collection<EqualityRelationship> constraints)
+	private static void clearUpSingleUnion(Collection<EqualityRelationship> constraints)
 	{
 		for (EqualityRelationship r : constraints)
 		{
@@ -117,11 +119,14 @@ public class Solver
 
 	/**
 	 * Return literal solution of all variables, ie. VariableIn, VariableOut, VariableRes.
+	 *
 	 * @param constraints
 	 * @return
 	 */
 	public static ArrayList<EqualityRelationship> solve(List<EqualityRelationship> constraints)
 	{
+		//Clear up single union
+		clearUpSingleUnion(constraints);
 		HashSet<EqualityRelationship> workingset = new HashSet<>(constraints);
 
 		boolean hasChange;
@@ -174,11 +179,21 @@ public class Solver
 		{
 			if (r.left instanceof VariableRes && r.right instanceof Literal)
 				solutions.add(r);
-			if(r.left instanceof VariableOut && r.right instanceof Literal)
+			if (r.left instanceof VariableOut && r.right instanceof Literal)
 				solutions.add(r);
-			if(r.left instanceof VariableIn && r.right instanceof Literal)
+			if (r.left instanceof VariableIn && r.right instanceof Literal)
 				solutions.add(r);
 		}
+
+		if(Options.isDebug)
+			solutions.sort(new Comparator<EqualityRelationship>()
+			{
+				@Override
+				public int compare(EqualityRelationship o1, EqualityRelationship o2)
+				{
+					return ((FlowSensitiveVariable)o1.left).getStatement().compareTo(((FlowSensitiveVariable)o2.left).getStatement());
+				}
+			});
 
 		return solutions;
 

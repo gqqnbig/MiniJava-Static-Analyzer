@@ -38,21 +38,9 @@ public class SimpleTest
 						c.right == PossibleNullLiteral.instance));
 
 
-		//Clear up single union
-		Solver.clearUpSingleUnion(constraintCollector.constraints);
 		List<EqualityRelationship> solutions = Solver.solve(constraintCollector.constraints);
 
 		solutions = solutions.stream().filter(r -> r.left instanceof VariableRes).collect(Collectors.toList());
-		MessageSendCollector messageSendCollector = new MessageSendCollector();
-
-		goal.accept(messageSendCollector);
-		for (MessageSend ms : messageSendCollector.messageSends)
-		{
-			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == ms.f0 && r.right == PossibleNullLiteral.instance))
-			{
-				return;
-			}
-		}
-		Assert.fail("Should find null pointer access.");
+		Assert.assertTrue("f.id() throws null pointer exception.", Solver.checkNullPointerException(goal, solutions));
 	}
 }

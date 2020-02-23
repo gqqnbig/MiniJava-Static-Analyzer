@@ -31,6 +31,7 @@ public class NullCheck
 //			System.setOut(nullOutputStream);
 		}
 		Options.shortform = Arrays.asList(args).contains("--short-form");
+		Options.isDebug = Arrays.asList(args).contains("--debug");
 
 
 		//the constructor sets static fields which affects the static Goal method.

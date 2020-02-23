@@ -7,6 +7,6 @@ class Main {
 class A {
     A f;
     public int id(){
-        return f.id();
+        return (((f))).id();
     }
 }
