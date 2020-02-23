@@ -16,7 +16,7 @@ public class VariablesTest
 	@Test
 	public void testVariableNumbers() throws ParseException, FileNotFoundException
 	{
-		FileInputStream stream = new FileInputStream("testcases/hw2/pair5/NullCheck.java");
+		FileInputStream stream = new FileInputStream("testcases/hw2/Pair5.java");
 		try {new MiniJavaParser(stream);} catch (Throwable e) {MiniJavaParser.ReInit(stream);}
 		Goal goal = MiniJavaParser.Goal();
 
