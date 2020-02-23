@@ -73,7 +73,11 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visit(Statement n, Location argu)
 	{
-//		List<utils.ObjectIdentifierDefinition> nullables = NullableCollector.getNullableIdentifierInScope(new Scope(getClassName(), getMethodName()));
+		if (n.f0.choice instanceof Block)
+		{
+			n.f0.accept(this, null);
+			return;
+		}
 
 		Location location = new Location(n);
 		if (isFirstStatement)
