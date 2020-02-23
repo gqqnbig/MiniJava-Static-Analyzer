@@ -1,7 +1,7 @@
 package nullPointerAnalysis;
 
 import math.Literal;
-import typeAnalysis.SolverHelper;
+import typeAnalysis.Solver;
 import utils.FlowSensitiveVariable;
 import utils.Location;
 import math.Variable;
@@ -46,9 +46,9 @@ public abstract class FlowSensitiveNullPointerAnalysisVariable<TInput> implement
 
 	public Literal<AnalysisResult> getReturnValue(Collection<EqualityRelationship> constraints)
 	{
-		if (constraints.stream().anyMatch(e -> SolverHelper.findLiteral(this, constraints) == PossibleNullLiteral.instance))
+		if (constraints.stream().anyMatch(e -> Solver.findLiteral(this, constraints) == PossibleNullLiteral.instance))
 			return PossibleNullLiteral.instance;
-		if (constraints.stream().anyMatch(e -> SolverHelper.findLiteral(this, constraints) == NotNullLiteral.instance))
+		if (constraints.stream().anyMatch(e -> Solver.findLiteral(this, constraints) == NotNullLiteral.instance))
 			return NotNullLiteral.instance;
 		return null;
 	}

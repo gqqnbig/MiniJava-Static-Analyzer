@@ -7,7 +7,6 @@ import typeAnalysis.ClassHierarchyAnalysis;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Objects;
 
 public class VariablesTest
 {

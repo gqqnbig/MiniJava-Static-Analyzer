@@ -13,16 +13,19 @@ public class VariableRes extends FlowSensitiveNullPointerAnalysisVariable<String
 	protected VariableRes(Node n, Location statement)
 	{
 		super(n.accept(new ExpressionToStringVisitor(), null) + "@" + Integer.toHexString(n.hashCode()), statement);
+		expression = n;
 	}
 
 	public VariableRes(Expression expression, Location statement)
 	{
 		this((Node) expression, statement);
+		this.expression = expression;
 	}
 
 	public VariableRes(PrimaryExpression expression, Location statement)
 	{
 		this((Node) expression, statement);
+		this.expression = expression;
 	}
 
 	public VariableRes(AllocationExpression n, Location statement)

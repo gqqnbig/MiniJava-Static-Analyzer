@@ -1,3 +1,5 @@
+package nullPointerAnalysis;
+
 import baseVisitors.ArgumentsCollector;
 import baseVisitors.VoidScopeVisitor;
 import nullPointerAnalysis.*;
@@ -17,7 +19,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 
 	List<ObjectIdentifierDefinition> nullablesInScope;
 
-	List<EqualityRelationship> constraints = new ArrayList<>();
+	public List<EqualityRelationship> constraints = new ArrayList<>();
 
 	@Override
 	public void visitScope(MainClass n, Location argu)

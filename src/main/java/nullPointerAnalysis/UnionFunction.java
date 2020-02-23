@@ -2,12 +2,11 @@ package nullPointerAnalysis;
 
 import math.FunctionUnion;
 import math.Literal;
-import typeAnalysis.SolverHelper;
+import typeAnalysis.Solver;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 public class UnionFunction implements FunctionUnion<AnalysisResult>, AnalysisResult
 {
@@ -38,7 +37,7 @@ public class UnionFunction implements FunctionUnion<AnalysisResult>, AnalysisRes
 
 	public Literal<AnalysisResult> getReturnValue(Collection<EqualityRelationship> constraints)
 	{
-		if (inputArray.stream().anyMatch(e -> SolverHelper.findLiteral(e, constraints) == PossibleNullLiteral.instance))
+		if (inputArray.stream().anyMatch(e -> Solver.findLiteral(e, constraints) == PossibleNullLiteral.instance))
 			return PossibleNullLiteral.instance;
 
 		return null;

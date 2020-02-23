@@ -1,7 +1,4 @@
-import nullPointerAnalysis.EqualityRelationship;
-import nullPointerAnalysis.ProgramStructureCollector;
-import nullPointerAnalysis.VariableIn;
-import nullPointerAnalysis.VariableRes;
+import nullPointerAnalysis.*;
 import org.junit.Assert;
 import org.junit.Test;
 import syntaxtree.Goal;
