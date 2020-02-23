@@ -287,28 +287,26 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		{
 			String identifierName = ((Identifier) n.f0.choice).f0.toString();
 			Optional<ObjectIdentifierDefinition> localVariable = nullablesInScope.stream().filter(o -> o.getIdentifier().equals(identifierName) && o.Method != null).findAny();
+			ObjectIdentifierDefinition receiver = null;
 			if (localVariable.isPresent())
 			{
-				VariableRes vRes = new VariableRes(n, argu);
-				VariableIn vIn = new VariableIn(localVariable.get(), argu);
-				EqualityRelationship r = new EqualityRelationship();
-				r.left = vRes;
-				r.right = vIn;
-				constraints.add(r);
+				receiver = localVariable.get();
 			}
 			else
 			{
 				Optional<ObjectIdentifierDefinition> field = nullablesInScope.stream().filter(o -> o.getIdentifier().equals(identifierName)).findAny();
 				if (field.isPresent())
-				{
-					VariableRes vRes = new VariableRes(n, argu);
-					VariableIn vIn = new VariableIn(field.get(), argu);
-					EqualityRelationship r = new EqualityRelationship();
-					r.comment = "C9";
-					r.left = vRes;
-					r.right = vIn;
-					constraints.add(r);
-				}
+					receiver = field.get();
+			}
+			if (receiver != null)
+			{
+				VariableRes vRes = new VariableRes(n, argu);
+				VariableIn vIn = new VariableIn(receiver, argu);
+				EqualityRelationship r = new EqualityRelationship();
+				r.comment = "C9";
+				r.left = vRes;
+				r.right = vIn;
+				constraints.add(r);
 			}
 		}
 
