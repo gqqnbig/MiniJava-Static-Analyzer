@@ -3,6 +3,7 @@ package nullPointerAnalysis;
 import baseVisitors.ArrayLookupVisitor;
 import baseVisitors.MessageSendCollector;
 import math.Literal;
+import math.Variable;
 import syntaxtree.ArrayLookup;
 import syntaxtree.Goal;
 import syntaxtree.MessageSend;
@@ -112,31 +113,34 @@ public class Solver
 			for (int i = 0; i < constraints.size(); i++)
 			{
 				EqualityRelationship r = constraints.get(i);
-				if (r.right instanceof Literal<?> == false)
-				{
-					if (r.right instanceof FlowSensitiveNullPointerAnalysisVariable)
-					{
-						Literal<AnalysisResult> result = ((FlowSensitiveNullPointerAnalysisVariable) r.right).getReturnValue(constraints);
-						if (result != null)
-						{
-							EqualityRelationship newEquality = new EqualityRelationship();
-							newEquality.left = r.left;
-							newEquality.right = (AnalysisResult) result;
-							hasChange = workingset.add(newEquality) || hasChange;
-						}
-					}
 
-					else if (r.right instanceof UnionFunction)
-					{
-						Literal<AnalysisResult> result = ((UnionFunction) r.right).getReturnValue(constraints);
-						if (result != null)
-						{
-							EqualityRelationship newEquality = new EqualityRelationship();
-							newEquality.left = r.left;
-							newEquality.right = (AnalysisResult) result;
-							hasChange = workingset.add(newEquality) || hasChange;
-						}
-					}
+				Literal<AnalysisResult> rightL = null;
+				if (r.right instanceof FlowSensitiveNullPointerAnalysisVariable)
+					rightL = ((FlowSensitiveNullPointerAnalysisVariable) r.right).getReturnValue(constraints);
+				else if (r.right instanceof UnionFunction)
+					rightL = ((UnionFunction) r.right).getReturnValue(constraints);
+
+				Literal<AnalysisResult> leftL = null;
+				if (r.left instanceof FlowSensitiveNullPointerAnalysisVariable)
+					leftL = ((FlowSensitiveNullPointerAnalysisVariable) r.left).getReturnValue(constraints);
+				else if (r.left instanceof UnionFunction)
+					leftL = ((UnionFunction) r.left).getReturnValue(constraints);
+
+				if (leftL == null && rightL != null)
+				{
+					EqualityRelationship newEquality = new EqualityRelationship(r.left, (AnalysisResult) rightL);
+					hasChange = workingset.add(newEquality) || hasChange;
+				}
+				else if (leftL != null && rightL == null)
+				{
+					EqualityRelationship newEquality = new EqualityRelationship(r.right, (AnalysisResult) leftL);
+					hasChange = workingset.add(newEquality) || hasChange;
+				}
+				else if (leftL != null && rightL != null)
+				{
+					Literal<AnalysisResult> l = UnionFunction.union(leftL, rightL);
+					hasChange = workingset.add(new EqualityRelationship(r.left, (AnalysisResult) l)) || hasChange;
+					hasChange = workingset.add(new EqualityRelationship(r.right, (AnalysisResult) l)) || hasChange;
 				}
 			}
 		}
@@ -149,6 +153,8 @@ public class Solver
 			if (r.left instanceof VariableRes && r.right instanceof Literal)
 				solutions.add(r);
 //			if(r.left instanceof VariableOut && r.right instanceof Literal)
+//				solutions.add(r);
+//			if(r.left instanceof VariableIn && r.right instanceof Literal)
 //				solutions.add(r);
 		}
 

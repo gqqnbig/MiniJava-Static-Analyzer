@@ -14,6 +14,13 @@ public class EqualityRelationship extends math.EqualityRelationship<AnalysisResu
 		this.right = right;
 	}
 
+	public EqualityRelationship(AnalysisResult left, AnalysisResult right, String comment)
+	{
+		this.left = left;
+		this.right = right;
+		this.comment = comment;
+	}
+
 	@Override
 	public String toString()
 	{
