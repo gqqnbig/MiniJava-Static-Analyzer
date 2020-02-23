@@ -1,9 +1,11 @@
 package nullPointerAnalysis;
 
+import baseVisitors.ArrayLengthVisitor;
 import baseVisitors.ArrayLookupVisitor;
 import baseVisitors.MessageSendCollector;
 import math.Literal;
 import math.Variable;
+import syntaxtree.ArrayLength;
 import syntaxtree.ArrayLookup;
 import syntaxtree.Goal;
 import syntaxtree.MessageSend;
@@ -84,6 +86,16 @@ public class Solver
 			}
 		}
 
+		ArrayLengthVisitor arrayLengthVisitor=new ArrayLengthVisitor();
+		goal.accept(arrayLengthVisitor);
+
+		for(ArrayLength al: arrayLengthVisitor.arrayLengths)
+		{
+			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == al.f0 && r.right == PossibleNullLiteral.instance))
+			{
+				return true;
+			}
+		}
 		return false;
 	}
 
