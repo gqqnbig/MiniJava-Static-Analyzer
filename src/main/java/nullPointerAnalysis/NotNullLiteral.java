@@ -1,7 +1,6 @@
 package nullPointerAnalysis;
 
 import math.Literal;
-import utils.Options;
 
 public class NotNullLiteral implements Literal<AnalysisResult>, AnalysisResult
 {
@@ -13,13 +12,4 @@ public class NotNullLiteral implements Literal<AnalysisResult>, AnalysisResult
 	}
 
 	private NotNullLiteral() {}
-
-	@Override
-	public String toString()
-	{
-		if (Options.shortform)
-			return "N";
-		else
-			return "No NullPointerException";
-	}
 }

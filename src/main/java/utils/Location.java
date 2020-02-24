@@ -41,15 +41,6 @@ public class Location implements Comparable<Location>
 	}
 
 	@Override
-	public String toString()
-	{
-		if (Options.shortform)
-			return "L" + line;
-		else
-			return String.format("L%dC%d", line, column);
-	}
-
-	@Override
 	public boolean equals(Object o)
 	{
 		if (this == o) return true;

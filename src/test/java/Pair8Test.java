@@ -39,7 +39,6 @@ public class Pair8Test
 		Assert.assertTrue("res[nullField, L19] = M is missing from the solutions.",
 				solutions.stream().anyMatch(c -> ((VariableRes) c.left).getInput().startsWith("nullField@") && c.right == PossibleNullLiteral.instance));
 
-		Solver.debugOut = new PrintStream(OutputStream.nullOutputStream());
 		Assert.assertTrue("Pair8 may throw null pointer exception, but we didn't detect it.", Solver.checkNullPointerException(goal, solutions));
 	}
 }

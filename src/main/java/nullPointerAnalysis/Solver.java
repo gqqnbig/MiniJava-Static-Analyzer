@@ -5,7 +5,6 @@ import math.Literal;
 import math.Variable;
 import syntaxtree.*;
 import utils.FlowSensitiveVariable;
-import utils.Options;
 
 import java.io.PrintStream;
 import java.util.*;
@@ -13,8 +12,6 @@ import java.util.stream.Collectors;
 
 public class Solver
 {
-	public static PrintStream debugOut;
-
 	/**
 	 * if not found, return null.
 	 *
@@ -46,19 +43,10 @@ public class Solver
 	{
 		ConstraintCollector constraintCollector = new ConstraintCollector();
 		goal.accept(constraintCollector, null);
-		debugOut.println("\nConstraints:");
-		for (EqualityRelationship r : constraintCollector.constraints)
-		{
-			debugOut.println(r);
-		}
 
 
 		List<EqualityRelationship> solutions = solve(constraintCollector.constraints);
-		debugOut.println("\nSolutions:");
-		for (EqualityRelationship r : solutions)
-		{
-			debugOut.println(r);
-		}
+
 
 		return checkNullPointerException(goal, solutions);
 	}
@@ -74,7 +62,6 @@ public class Solver
 			EqualityRelationship r = checkNullMatch(ms.f0, solutions);
 			if (r != null)
 			{
-				debugOut.println("Null pointer exception at " + ms.accept(new ExpressionToStringVisitor(), null) + " , line " + ((VariableRes) r.left).getStatement().getLine());
 				return true;
 			}
 		}
@@ -86,7 +73,6 @@ public class Solver
 			EqualityRelationship r = checkNullMatch(al.f0, solutions);
 			if (r != null)
 			{
-				debugOut.println("Null pointer exception at " + al.accept(new ExpressionToStringVisitor(), null) + " , line " + ((VariableRes) r.left).getStatement().getLine());
 				return true;
 			}
 		}
@@ -99,7 +85,6 @@ public class Solver
 			EqualityRelationship r = checkNullMatch(al.f0, solutions);
 			if (r != null)
 			{
-				debugOut.println("Null pointer exception at " + al.accept(new ExpressionToStringVisitor(), null) + " , line " + ((VariableRes) r.left).getStatement().getLine());
 				return true;
 			}
 		}
@@ -192,17 +177,6 @@ public class Solver
 			if (r.left instanceof VariableIn && r.right instanceof Literal)
 				solutions.add(r);
 		}
-
-		if(Options.isDebug)
-			solutions.sort(new Comparator<EqualityRelationship>()
-			{
-				@Override
-				public int compare(EqualityRelationship o1, EqualityRelationship o2)
-				{
-					return ((FlowSensitiveVariable)o1.left).getStatement().compareTo(((FlowSensitiveVariable)o2.left).getStatement());
-				}
-			});
-
 		return solutions;
 
 	}

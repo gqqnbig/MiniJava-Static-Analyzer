@@ -28,7 +28,6 @@ public class ArrayLengthTest
 		ClassHierarchyAnalysis.init(goal);
 		goal.accept(new AllocationVisitor());
 
-		Solver.debugOut = new PrintStream(OutputStream.nullOutputStream());
 		Assert.assertTrue("Null pointer exception should be thrown at line 6.", Solver.checkNullPointer(goal));
 	}
 }

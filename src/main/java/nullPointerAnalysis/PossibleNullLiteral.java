@@ -1,9 +1,6 @@
 package nullPointerAnalysis;
 
 import math.Literal;
-import utils.Options;
-
-import javax.swing.text.rtf.RTFEditorKit;
 
 public class PossibleNullLiteral implements Literal<AnalysisResult>, AnalysisResult
 {
@@ -15,14 +12,4 @@ public class PossibleNullLiteral implements Literal<AnalysisResult>, AnalysisRes
 	}
 
 	private PossibleNullLiteral() {}
-
-
-	@Override
-	public String toString()
-	{
-		if (Options.shortform)
-			return "M";
-		else
-			return "May throw exception";
-	}
 }
