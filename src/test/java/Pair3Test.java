@@ -3,6 +3,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import syntaxtree.Goal;
 import typeAnalysis.ClassHierarchyAnalysis;
+import typeAnalysis.RapidTypeAnalysis;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,8 +17,10 @@ public class Pair3Test
 		try {new MiniJavaParser(stream);} catch (Throwable e) {MiniJavaParser.ReInit(stream);}
 		Goal goal = MiniJavaParser.Goal();
 
+
 		ProgramStructureCollector.init(goal);
-		ClassHierarchyAnalysis.init(goal);
+		Solver.typeService=new ClassHierarchyAnalysis();
+		Solver.typeService.init(goal);
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 

@@ -2,10 +2,7 @@ package typeAnalysis;
 
 import baseVisitors.ParameterCollector;
 import baseVisitors.ScopeVisitor;
-import syntaxtree.ClassDeclaration;
-import syntaxtree.ClassExtendsDeclaration;
-import syntaxtree.MainClass;
-import syntaxtree.MethodDeclaration;
+import syntaxtree.*;
 import visitor.GJDepthFirst;
 
 import java.util.HashMap;
@@ -43,10 +40,10 @@ public class ProgramStructureCollector extends ScopeVisitor<Object>
 	 */
 	protected static HashMap<String, String> superClassHierarchy;
 
-	public static void init()
+	public static void init(Goal goal)
 	{
-
-
+		ProgramStructureCollector cmv = new ProgramStructureCollector();
+		goal.accept(cmv);
 	}
 
 	protected ProgramStructureCollector()

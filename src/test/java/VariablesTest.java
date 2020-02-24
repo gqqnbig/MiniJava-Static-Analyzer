@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import syntaxtree.Goal;
 import typeAnalysis.ClassHierarchyAnalysis;
+import typeAnalysis.RapidTypeAnalysis;
 import utils.FlowSensitiveVariable;
 
 import java.io.File;
@@ -24,7 +25,9 @@ public class VariablesTest
 		Goal goal = MiniJavaParser.Goal();
 
 		ProgramStructureCollector.init(goal);
-		ClassHierarchyAnalysis.init(goal);
+
+		Solver.typeService=new ClassHierarchyAnalysis();
+		Solver.typeService.init(goal);
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 
@@ -73,7 +76,9 @@ public class VariablesTest
 		Goal goal = MiniJavaParser.Goal();
 
 		ProgramStructureCollector.init(goal);
-		ClassHierarchyAnalysis.init(goal);
+
+		Solver.typeService=new ClassHierarchyAnalysis();
+		Solver.typeService.init(goal);
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 

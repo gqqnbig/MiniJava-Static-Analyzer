@@ -4,6 +4,7 @@ import baseVisitors.ArgumentsCollector;
 import baseVisitors.VoidScopeVisitor;
 import syntaxtree.*;
 import typeAnalysis.ClassHierarchyAnalysis;
+import typeAnalysis.RapidTypeAnalysis;
 import utils.Location;
 import utils.Scope;
 
@@ -150,7 +151,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 			ArgumentsCollector argumentsCollector = new ArgumentsCollector();
 			((MessageSend) (n.f2.f0.choice)).f4.accept(argumentsCollector);
 			ArrayList<Expression> arguments = argumentsCollector.arguments;
-			Collection<String> possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName, arguments.size());
+			Collection<String> possibleTypes = Solver.typeService.getPossibleTypes(n.f0, methodName, arguments.size());
 			assert possibleTypes != null && possibleTypes.size() > 0;
 
 			addC5(location, assignee, methodName, possibleTypes);
@@ -259,7 +260,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		ArgumentsCollector argumentsCollector = new ArgumentsCollector();
 		n.f4.accept(argumentsCollector);
 		String methodName = n.f2.f0.toString();
-		Collection<String> possibleTypes = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName, argumentsCollector.arguments.size());
+		Collection<String> possibleTypes = Solver.typeService.getPossibleTypes(n.f0, methodName, argumentsCollector.arguments.size());
 		for (String type : possibleTypes)
 		{
 			VariableRes vRes = new VariableRes(ProgramStructureCollector.getReturnExpression(type, methodName), ProgramStructureCollector.getLastStatement(type, methodName));

@@ -2,6 +2,7 @@ import nullPointerAnalysis.*;
 import syntaxtree.*;
 import typeAnalysis.ClassHierarchyAnalysis;
 import nullPointerAnalysis.Solver;
+import typeAnalysis.RapidTypeAnalysis;
 import utils.FlowSensitiveVariable;
 import utils.Options;
 
@@ -39,7 +40,8 @@ public class NullCheck
 		Goal goal = MiniJavaParser.Goal();
 
 		ProgramStructureCollector.init(goal);
-		ClassHierarchyAnalysis.init(goal);
+		Solver.typeService=new RapidTypeAnalysis();
+		Solver.typeService.init(goal);
 
 		if (Options.isDebug)
 		{

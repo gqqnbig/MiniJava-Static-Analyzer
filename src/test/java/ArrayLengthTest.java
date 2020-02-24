@@ -7,6 +7,7 @@ import syntaxtree.ArrayLookup;
 import syntaxtree.Goal;
 import syntaxtree.MessageSend;
 import typeAnalysis.ClassHierarchyAnalysis;
+import typeAnalysis.RapidTypeAnalysis;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,8 +25,9 @@ public class ArrayLengthTest
 		Goal goal = MiniJavaParser.Goal();
 
 		ProgramStructureCollector.init(goal);
-		ClassHierarchyAnalysis.init(goal);
 
+		Solver.typeService=new ClassHierarchyAnalysis();
+		Solver.typeService.init(goal);
 		PrintStream debugOut = new PrintStream(OutputStream.nullOutputStream());
 		Assert.assertTrue("Null pointer exception should be thrown at line 6.", Solver.checkNullPointer(goal, debugOut));
 	}

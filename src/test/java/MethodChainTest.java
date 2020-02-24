@@ -7,6 +7,7 @@ import syntaxtree.ArrayLookup;
 import syntaxtree.Goal;
 import syntaxtree.MessageSend;
 import typeAnalysis.ClassHierarchyAnalysis;
+import typeAnalysis.RapidTypeAnalysis;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -24,7 +25,9 @@ public class MethodChainTest
 		Goal goal = MiniJavaParser.Goal();
 
 		ProgramStructureCollector.init(goal);
-		ClassHierarchyAnalysis.init(goal);
+
+		Solver.typeService=new ClassHierarchyAnalysis();
+		Solver.typeService.init(goal);
 		PrintStream debugOut = new PrintStream(OutputStream.nullOutputStream());
 		ConstraintCollector constraintCollector = new ConstraintCollector();
 		goal.accept(constraintCollector, null);

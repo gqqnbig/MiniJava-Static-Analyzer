@@ -6,6 +6,7 @@ import syntaxtree.Goal;
 import syntaxtree.MessageSend;
 import typeAnalysis.ClassHierarchyAnalysis;
 import nullPointerAnalysis.Solver;
+import typeAnalysis.RapidTypeAnalysis;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -23,7 +24,9 @@ public class SimpleTest
 		Goal goal = MiniJavaParser.Goal();
 
 		ProgramStructureCollector.init(goal);
-		ClassHierarchyAnalysis.init(goal);
+		Solver.typeService=new ClassHierarchyAnalysis();
+		Solver.typeService.init(goal);
+
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 

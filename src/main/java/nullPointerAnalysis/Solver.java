@@ -6,6 +6,7 @@ import baseVisitors.MessageSendCollector;
 import math.Literal;
 import math.Variable;
 import syntaxtree.*;
+import typeAnalysis.TypeService;
 import utils.FlowSensitiveVariable;
 import utils.Options;
 
@@ -15,6 +16,8 @@ import java.util.stream.Collectors;
 
 public class Solver
 {
+	public static TypeService typeService;
+
 	/**
 	 * if not found, return null.
 	 *

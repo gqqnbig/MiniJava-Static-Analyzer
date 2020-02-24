@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import syntaxtree.Goal;
 import typeAnalysis.ClassHierarchyAnalysis;
+import typeAnalysis.RapidTypeAnalysis;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,7 +21,9 @@ public class SimpleArrayTest
 		Goal goal = MiniJavaParser.Goal();
 
 		ProgramStructureCollector.init(goal);
-		ClassHierarchyAnalysis.init(goal);
+
+		Solver.typeService=new ClassHierarchyAnalysis();
+		Solver.typeService.init(goal);
 		Assert.assertTrue("SimpleArrayTest may throw null pointer exception, but we didn't detect it.", Solver.checkNullPointer(goal, new PrintStream(OutputStream.nullOutputStream())));
 
 	}

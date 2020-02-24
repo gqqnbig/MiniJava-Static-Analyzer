@@ -58,7 +58,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 				scopeNullables.add(entry);
 		}
 
-		String className = typeAnalysis.ClassHierarchyAnalysis.superClassHierarchy.get(scope.Class);
+		String className = Solver.typeService.getSuperClassHierarchy().get(scope.Class);
 		while (className != null)
 		{
 			scopeNullables.addAll(getNullableFieldsDefinedInClass(className));

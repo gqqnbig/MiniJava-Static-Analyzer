@@ -6,19 +6,29 @@ import syntaxtree.PrimaryExpression;
 
 import java.util.*;
 
-public class ClassHierarchyAnalysis
+public class ClassHierarchyAnalysis implements TypeService
 {
-	private static Goal goal;
-	private static HashMap<String, HashSet<Tuple<String, Integer>>> classMethodMapping;
-	public static HashMap<String, String> superClassHierarchy;
+	protected Goal goal;
+	protected HashMap<String, HashSet<Tuple<String, Integer>>> classMethodMapping;
+
+
+	protected HashMap<String, String> superClassHierarchy;
 	/**
 	 * given a method name, return the classes where the given method can be called.
 	 */
-	private static HashMap<Tuple<String, Integer>, HashSet<String>> methodAvailableInClassMapping;
+	protected HashMap<Tuple<String, Integer>, HashSet<String>> methodAvailableInClassMapping;
 
-	public static void init(Goal goal)
+
+	@Override
+	public HashMap<String, String> getSuperClassHierarchy()
 	{
-		ClassHierarchyAnalysis.goal = goal;
+		return superClassHierarchy;
+	}
+
+	@Override
+	public void init(Goal goal)
+	{
+		this.goal = goal;
 		if (ProgramStructureCollector.classMethodMapping == null || ProgramStructureCollector.classMethodMapping.size() == 0)
 		{
 			ProgramStructureCollector cmv = new ProgramStructureCollector();
@@ -42,7 +52,8 @@ public class ClassHierarchyAnalysis
 	 * @param
 	 * @return
 	 */
-	public static Collection<String> getPossibleTypes(PrimaryExpression receiver, String methodName, int parameterCount)
+	@Override
+	public Collection<String> getPossibleTypes(PrimaryExpression receiver, String methodName, int parameterCount)
 	{
 		return methodAvailableInClassMapping.get(new Tuple<>(methodName, parameterCount));
 	}
@@ -53,12 +64,13 @@ public class ClassHierarchyAnalysis
 	 * @param
 	 * @return
 	 */
-	public static Collection<String> getPossibleTypes(Identifier receiver, String methodName, int parameterCount)
+	@Override
+	public Collection<String> getPossibleTypes(Identifier receiver, String methodName, int parameterCount)
 	{
 		return methodAvailableInClassMapping.get(new Tuple<>(methodName, parameterCount));
 	}
 
-	static HashMap<Tuple<String, Integer>, HashSet<String>> c2mTOm2c(HashMap<String, HashSet<Tuple<String, Integer>>> c2m)
+	HashMap<Tuple<String, Integer>, HashSet<String>> c2mTOm2c(HashMap<String, HashSet<Tuple<String, Integer>>> c2m)
 	{
 		HashMap<Tuple<String, Integer>, HashSet<String>> m2c = new HashMap<>();
 		for (String thisClass : c2m.keySet())
