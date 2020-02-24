@@ -5,10 +5,7 @@ import baseVisitors.ArrayLookupVisitor;
 import baseVisitors.MessageSendCollector;
 import math.Literal;
 import math.Variable;
-import syntaxtree.ArrayLength;
-import syntaxtree.ArrayLookup;
-import syntaxtree.Goal;
-import syntaxtree.MessageSend;
+import syntaxtree.*;
 import utils.FlowSensitiveVariable;
 import utils.Options;
 
@@ -85,7 +82,8 @@ public class Solver
 		goal.accept(arrayLookupVisitor);
 		for (ArrayLookup al : arrayLookupVisitor.arrayLookups)
 		{
-			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == al.f0 && r.right == PossibleNullLiteral.instance))
+			Node divedNode = VariableRes.diveInto(al.f0);
+			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == divedNode && r.right == PossibleNullLiteral.instance))
 			{
 				return true;
 			}
@@ -96,7 +94,8 @@ public class Solver
 
 		for (ArrayLength al : arrayLengthVisitor.arrayLengths)
 		{
-			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == al.f0 && r.right == PossibleNullLiteral.instance))
+			Node divedNode = VariableRes.diveInto(al.f0);
+			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == divedNode && r.right == PossibleNullLiteral.instance))
 			{
 				return true;
 			}

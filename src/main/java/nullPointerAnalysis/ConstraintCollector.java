@@ -275,7 +275,14 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visit(PrimaryExpression n, Location argu)
 	{
-		if (n.f0.choice instanceof AllocationExpression)
+		if (n.f0.choice instanceof BracketExpression)
+		{
+			EqualityRelationship r = new EqualityRelationship();
+			r.left = new VariableRes((BracketExpression) n.f0.choice, argu);
+			r.right = new VariableRes(((BracketExpression) n.f0.choice).f1, argu);
+			constraints.add(r);
+		}
+		else if (n.f0.choice instanceof AllocationExpression)
 		{
 			EqualityRelationship r = new EqualityRelationship();
 			r.left = new VariableRes((AllocationExpression) n.f0.choice, argu);
@@ -313,4 +320,14 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 
 		super.visit(n, argu);
 	}
+
+//	@Override
+//	public void visit(Expression n, Location argu)
+//	{
+//		EqualityRelationship r = new EqualityRelationship();
+//		r.left = new VariableRes(n, argu);
+//		r.right = new VariableRes(n.f0.choice, argu);
+//		constraints.add(r);
+//		super.visit(n, argu);
+//	}
 }

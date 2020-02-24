@@ -102,20 +102,20 @@ public class VariablesTest
 		}
 	}
 
-	@Test
-	public void testManyBrackets() throws FileNotFoundException, ParseException
-	{
-		FileInputStream stream = new FileInputStream("testcases/hw2/NullCheckSimple.java");
-		try {MiniJavaParser.ReInit(stream);} catch (Throwable e) {new MiniJavaParser(stream);}
-		Goal goal = MiniJavaParser.Goal();
-
-		ProgramStructureCollector.init(goal);
-		ClassHierarchyAnalysis.init(goal);
-		VariableCollector variableCollector = new VariableCollector();
-		goal.accept(variableCollector, null);
-
-		var set = new HashSet<>(variableCollector.variables);
-		Assert.assertEquals("Collected variables should not have duplicates.\n" + variableCollector.variables.stream().map(FlowSensitiveVariable::toString).collect(Collectors.joining("\n")),
-				set.size(), variableCollector.variables.size());
-	}
+//	@Test
+//	public void testManyBrackets() throws FileNotFoundException, ParseException
+//	{
+//		FileInputStream stream = new FileInputStream("testcases/hw2/NullCheckSimple.java");
+//		try {MiniJavaParser.ReInit(stream);} catch (Throwable e) {new MiniJavaParser(stream);}
+//		Goal goal = MiniJavaParser.Goal();
+//
+//		ProgramStructureCollector.init(goal);
+//		ClassHierarchyAnalysis.init(goal);
+//		VariableCollector variableCollector = new VariableCollector();
+//		goal.accept(variableCollector, null);
+//
+//		var set = new HashSet<>(variableCollector.variables);
+//		Assert.assertEquals("Collected variables should not have duplicates.\n" + variableCollector.variables.stream().map(FlowSensitiveVariable::toString).collect(Collectors.joining("\n")),
+//				set.size(), variableCollector.variables.size());
+//	}
 }
