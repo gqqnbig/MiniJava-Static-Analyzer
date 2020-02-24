@@ -1,9 +1,9 @@
 package nullPointerAnalysis;
 
 import math.Literal;
+import math.Variable;
 import utils.FlowSensitiveVariable;
 import utils.Location;
-import math.Variable;
 
 import java.util.Collection;
 import java.util.Objects;

@@ -6,7 +6,6 @@ import syntaxtree.ClassDeclaration;
 import syntaxtree.ClassExtendsDeclaration;
 import syntaxtree.MainClass;
 import syntaxtree.MethodDeclaration;
-import visitor.GJDepthFirst;
 
 import java.util.HashMap;
 import java.util.HashSet;

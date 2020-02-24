@@ -2,7 +2,6 @@ package nullPointerAnalysis;
 
 import baseVisitors.ExpressionToStringVisitor;
 import syntaxtree.*;
-import utils.FlowSensitiveVariable;
 import utils.Location;
 
 public class VariableRes extends FlowSensitiveNullPointerAnalysisVariable<String>

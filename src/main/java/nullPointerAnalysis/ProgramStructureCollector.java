@@ -6,7 +6,6 @@ import utils.Location;
 import utils.Scope;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ProgramStructureCollector extends typeAnalysis.ProgramStructureCollector
 {

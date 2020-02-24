@@ -1,10 +1,3 @@
-import baseVisitors.ScopeVisitor;
-import syntaxtree.*;
-import utils.Scope;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 //
 //public class NullableCollector extends ScopeVisitor<Object>
 //{

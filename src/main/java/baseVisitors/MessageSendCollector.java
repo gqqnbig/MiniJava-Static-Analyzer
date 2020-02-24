@@ -1,7 +1,6 @@
 package baseVisitors;
 
 import syntaxtree.MessageSend;
-import utils.NodeCapture;
 import visitor.DepthFirstVisitor;
 
 import java.util.ArrayList;

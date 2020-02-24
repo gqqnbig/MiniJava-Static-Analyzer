@@ -1,11 +1,7 @@
 package baseVisitors;
 
 import syntaxtree.*;
-import utils.Scope;
 import visitor.GJDepthFirst;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Get the string content of a node, and fully qualify identifiers.

@@ -4,7 +4,10 @@ import syntaxtree.Goal;
 import syntaxtree.Identifier;
 import syntaxtree.PrimaryExpression;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Objects;
 
 public class ClassHierarchyAnalysis
 {

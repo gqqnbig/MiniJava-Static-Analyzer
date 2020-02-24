@@ -1,8 +1,10 @@
 package nullPointerAnalysis;
 
-import baseVisitors.*;
+import baseVisitors.ArrayLengthVisitor;
+import baseVisitors.ArrayLookupVisitor;
+import baseVisitors.ExpressionToStringVisitor;
+import baseVisitors.MessageSendCollector;
 import math.Literal;
-import math.Variable;
 import syntaxtree.*;
 import utils.FlowSensitiveVariable;
 import utils.Options;

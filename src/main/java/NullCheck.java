@@ -1,8 +1,8 @@
 import baseVisitors.AllocationVisitor;
-import nullPointerAnalysis.*;
-import syntaxtree.*;
-import typeAnalysis.ClassHierarchyAnalysis;
+import nullPointerAnalysis.ProgramStructureCollector;
 import nullPointerAnalysis.Solver;
+import syntaxtree.Goal;
+import typeAnalysis.ClassHierarchyAnalysis;
 import utils.FlowSensitiveVariable;
 import utils.Options;
 

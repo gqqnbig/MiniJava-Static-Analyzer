@@ -3,8 +3,6 @@ package nullPointerAnalysis;
 import math.Literal;
 import utils.Options;
 
-import javax.swing.text.rtf.RTFEditorKit;
-
 public class PossibleNullLiteral implements Literal<AnalysisResult>, AnalysisResult
 {
 	public static final PossibleNullLiteral instance = getInstance();

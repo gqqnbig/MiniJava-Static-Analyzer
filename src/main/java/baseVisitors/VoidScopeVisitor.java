@@ -4,7 +4,6 @@ import syntaxtree.ClassDeclaration;
 import syntaxtree.ClassExtendsDeclaration;
 import syntaxtree.MainClass;
 import syntaxtree.MethodDeclaration;
-import visitor.GJNoArguDepthFirst;
 import visitor.GJVoidDepthFirst;
 
 public abstract class VoidScopeVisitor<A> extends GJVoidDepthFirst<A>

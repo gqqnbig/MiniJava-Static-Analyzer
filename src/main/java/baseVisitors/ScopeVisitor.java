@@ -1,10 +1,10 @@
 package baseVisitors;
 
-import syntaxtree.*;
-import utils.Scope;
+import syntaxtree.ClassDeclaration;
+import syntaxtree.ClassExtendsDeclaration;
+import syntaxtree.MainClass;
+import syntaxtree.MethodDeclaration;
 import visitor.GJNoArguDepthFirst;
-
-import java.util.HashMap;
 
 public abstract class ScopeVisitor<R> extends GJNoArguDepthFirst<R>
 {
