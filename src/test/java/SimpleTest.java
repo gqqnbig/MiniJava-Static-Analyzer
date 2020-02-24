@@ -33,6 +33,18 @@ public class SimpleTest
 		ConstraintCollector constraintCollector = new ConstraintCollector();
 		goal.accept(constraintCollector, null);
 
+
+		for (EqualityRelationship r : constraintCollector.constraints)
+		{
+			if (r.left instanceof VariableIn || r.left instanceof VariableOut || r.left instanceof VariableRes)
+				Assert.assertTrue(r.left + " is not a previously captured variable.", variableCollector.variables.contains(r.left));
+			if (r.right instanceof VariableIn || r.right instanceof VariableOut || r.right instanceof VariableRes)
+				Assert.assertTrue(r.right + " is not a previously captured variable.", variableCollector.variables.contains(r.right));
+
+
+			Assert.assertNotEquals(r + " is invalid", r.left, r.right);
+		}
+
 		Assert.assertTrue("res[f,L10]=in[x,L10] is missing.",
 				constraintCollector.constraints.stream().anyMatch(c -> c.left instanceof VariableRes && ((VariableRes) c.left).getInput().startsWith("f@")));
 

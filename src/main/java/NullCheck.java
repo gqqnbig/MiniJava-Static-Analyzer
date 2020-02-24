@@ -54,7 +54,8 @@ public class NullCheck
 				debugOut.println(variable);
 			}
 		}
-		if (Solver.checkNullPointer(goal, debugOut))
+		Solver.debugOut = debugOut;
+		if (Solver.checkNullPointer(goal))
 			System.out.println("null pointer error");
 //		else
 //			System.out.println("Has no null-pointer problems");

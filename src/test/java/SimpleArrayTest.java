@@ -24,7 +24,8 @@ public class SimpleArrayTest
 		ClassHierarchyAnalysis.init(goal);
 		goal.accept(new AllocationVisitor());
 
-		Assert.assertTrue("SimpleArrayTest may throw null pointer exception, but we didn't detect it.", Solver.checkNullPointer(goal, new PrintStream(OutputStream.nullOutputStream())));
+		Solver.debugOut = new PrintStream(OutputStream.nullOutputStream());
+		Assert.assertTrue("SimpleArrayTest may throw null pointer exception, but we didn't detect it.", Solver.checkNullPointer(goal));
 
 	}
 }

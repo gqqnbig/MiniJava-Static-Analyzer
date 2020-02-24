@@ -69,10 +69,10 @@ public class VariableRes extends FlowSensitiveNullPointerAnalysisVariable<String
 		this(diveInto(expression), statement);
 	}
 
-	public VariableRes(BracketExpression n, Location statement)
-	{
-		this((Node) n, statement);
-	}
+//	public VariableRes(BracketExpression n, Location statement)
+//	{
+//		this((Node) n, statement);
+//	}
 
 	public VariableRes(AllocationExpression n, Location statement)
 	{

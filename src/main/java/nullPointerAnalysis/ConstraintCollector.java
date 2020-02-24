@@ -282,9 +282,10 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 		if (n.f0.choice instanceof BracketExpression)
 		{
 			EqualityRelationship r = new EqualityRelationship();
-			r.left = new VariableRes((BracketExpression) n.f0.choice, argu);
+			r.left = new VariableRes(n, argu);
 			r.right = new VariableRes(((BracketExpression) n.f0.choice).f1, argu);
-			constraints.add(r);
+			if (r.left.equals(r.right) == false)
+				constraints.add(r);
 		}
 		else if (n.f0.choice instanceof AllocationExpression)
 		{

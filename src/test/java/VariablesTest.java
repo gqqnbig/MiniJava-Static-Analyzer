@@ -30,15 +30,6 @@ public class VariablesTest
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 
-//		Assert.assertEquals(21, variableCollector.variables.stream().filter(v -> {
-//			Object input = v.getInput();
-//			if (input instanceof ObjectIdentifierDefinition)
-//				return (Objects.equals(((ObjectIdentifierDefinition) input).Method, "main") && ((ObjectIdentifierDefinition) input).getIsParameter()) == false;
-//			else
-//				return true;
-//		}).count());
-
-
 		ConstraintCollector constraintCollector = new ConstraintCollector();
 		goal.accept(constraintCollector, null);
 
@@ -55,7 +46,6 @@ public class VariablesTest
 
 
 			Assert.assertTrue(r + " is invalid", r.left.equals(r.right) == false);
-
 		}
 	}
 

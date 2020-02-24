@@ -1,8 +1,6 @@
 package nullPointerAnalysis;
 
-import baseVisitors.ArrayLengthVisitor;
-import baseVisitors.ArrayLookupVisitor;
-import baseVisitors.MessageSendCollector;
+import baseVisitors.*;
 import math.Literal;
 import math.Variable;
 import syntaxtree.*;
@@ -15,6 +13,8 @@ import java.util.stream.Collectors;
 
 public class Solver
 {
+	public static PrintStream debugOut;
+
 	/**
 	 * if not found, return null.
 	 *
@@ -40,10 +40,9 @@ public class Solver
 	 * return true if the program may throw null pointer exception.
 	 *
 	 * @param goal
-	 * @param debugOut
 	 * @return
 	 */
-	public static boolean checkNullPointer(Goal goal, PrintStream debugOut)
+	public static boolean checkNullPointer(Goal goal)
 	{
 		ConstraintCollector constraintCollector = new ConstraintCollector();
 		goal.accept(constraintCollector, null);
@@ -69,11 +68,13 @@ public class Solver
 		MessageSendCollector messageSendCollector = new MessageSendCollector();
 		goal.accept(messageSendCollector);
 
-		solutions = solutions.stream().filter(r -> r.left instanceof VariableRes).collect(Collectors.toList());
+		solutions = solutions.stream().filter(r -> r.left instanceof VariableRes && r.right == PossibleNullLiteral.instance).collect(Collectors.toList());
 		for (MessageSend ms : messageSendCollector.messageSends)
 		{
-			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == ms.f0.f0.choice && r.right == PossibleNullLiteral.instance))
+			EqualityRelationship r = checkNullMatch(ms.f0, solutions);
+			if (r != null)
 			{
+				debugOut.println("Null pointer exception at " + ms.accept(new ExpressionToStringVisitor(), null) + " , line " + ((VariableRes) r.left).getStatement().getLine());
 				return true;
 			}
 		}
@@ -82,9 +83,10 @@ public class Solver
 		goal.accept(arrayLookupVisitor);
 		for (ArrayLookup al : arrayLookupVisitor.arrayLookups)
 		{
-			Node divedNode = VariableRes.diveInto(al.f0);
-			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == divedNode && r.right == PossibleNullLiteral.instance))
+			EqualityRelationship r = checkNullMatch(al.f0, solutions);
+			if (r != null)
 			{
+				debugOut.println("Null pointer exception at " + al.accept(new ExpressionToStringVisitor(), null) + " , line " + ((VariableRes) r.left).getStatement().getLine());
 				return true;
 			}
 		}
@@ -94,13 +96,20 @@ public class Solver
 
 		for (ArrayLength al : arrayLengthVisitor.arrayLengths)
 		{
-			Node divedNode = VariableRes.diveInto(al.f0);
-			if (solutions.stream().anyMatch(r -> ((VariableRes) r.left).getExpression() == divedNode && r.right == PossibleNullLiteral.instance))
+			EqualityRelationship r = checkNullMatch(al.f0, solutions);
+			if (r != null)
 			{
+				debugOut.println("Null pointer exception at " + al.accept(new ExpressionToStringVisitor(), null) + " , line " + ((VariableRes) r.left).getStatement().getLine());
 				return true;
 			}
 		}
 		return false;
+	}
+
+	static EqualityRelationship checkNullMatch(PrimaryExpression receiver, List<EqualityRelationship> solutions)
+	{
+		Node divedNode = VariableRes.diveInto(receiver);
+		return solutions.stream().filter(r -> ((VariableRes) r.left).getExpression() == divedNode).findAny().orElse(null);
 	}
 
 	private static void clearUpSingleUnion(Collection<EqualityRelationship> constraints)
