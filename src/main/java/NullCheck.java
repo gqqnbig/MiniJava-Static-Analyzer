@@ -41,13 +41,16 @@ public class NullCheck
 		ProgramStructureCollector.init(goal);
 		ClassHierarchyAnalysis.init(goal);
 
-		VariableCollector variableCollector = new VariableCollector();
-		goal.accept(variableCollector, null);
-
-		debugOut.println("\nVariables:");
-		for (FlowSensitiveVariable variable : variableCollector.variables)
+		if (Options.isDebug)
 		{
-			debugOut.println(variable);
+			VariableCollector variableCollector = new VariableCollector();
+			goal.accept(variableCollector, null);
+
+			debugOut.println("\nVariables:");
+			for (FlowSensitiveVariable variable : variableCollector.variables)
+			{
+				debugOut.println(variable);
+			}
 		}
 		if (Solver.checkNullPointer(goal, debugOut))
 			System.out.println("null pointer error");
