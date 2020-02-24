@@ -1,3 +1,4 @@
+import baseVisitors.AllocationVisitor;
 import baseVisitors.ArrayLookupVisitor;
 import baseVisitors.MessageSendCollector;
 import nullPointerAnalysis.*;
@@ -25,7 +26,8 @@ public class MethodChainTest
 
 		ProgramStructureCollector.init(goal);
 		ClassHierarchyAnalysis.init(goal);
-		PrintStream debugOut = new PrintStream(OutputStream.nullOutputStream());
+		goal.accept(new AllocationVisitor());
+
 		ConstraintCollector constraintCollector = new ConstraintCollector();
 		goal.accept(constraintCollector, null);
 

@@ -1,3 +1,4 @@
+import baseVisitors.AllocationVisitor;
 import nullPointerAnalysis.*;
 import syntaxtree.*;
 import typeAnalysis.ClassHierarchyAnalysis;
@@ -40,6 +41,7 @@ public class NullCheck
 
 		ProgramStructureCollector.init(goal);
 		ClassHierarchyAnalysis.init(goal);
+		goal.accept(new AllocationVisitor());
 
 		if (Options.isDebug)
 		{

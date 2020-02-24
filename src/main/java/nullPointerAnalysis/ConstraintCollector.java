@@ -1,5 +1,6 @@
 package nullPointerAnalysis;
 
+import baseVisitors.AllocationVisitor;
 import baseVisitors.ArgumentsCollector;
 import baseVisitors.VoidScopeVisitor;
 import syntaxtree.*;
@@ -61,13 +62,16 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visitScope(ClassDeclaration n, Location argu)
 	{
-		n.f4.accept(this, null);
+
+		if (AllocationVisitor.usedClasses.contains(getClassName()))
+			n.f4.accept(this, null);
 	}
 
 	@Override
 	protected void visitScope(ClassExtendsDeclaration n, Location argu)
 	{
-		n.f6.accept(this, null);
+		if (AllocationVisitor.usedClasses.contains(getClassName()))
+			n.f6.accept(this, null);
 	}
 
 	@Override

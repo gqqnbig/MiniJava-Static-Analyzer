@@ -1,3 +1,4 @@
+import baseVisitors.AllocationVisitor;
 import baseVisitors.ArrayLookupVisitor;
 import baseVisitors.MessageSendCollector;
 import nullPointerAnalysis.*;
@@ -27,8 +28,8 @@ public class Pair8Test
 
 		ProgramStructureCollector.init(goal);
 		ClassHierarchyAnalysis.init(goal);
-		boolean condition = false;
-		PrintStream debugOut = new PrintStream(OutputStream.nullOutputStream());
+		goal.accept(new AllocationVisitor());
+
 		ConstraintCollector constraintCollector = new ConstraintCollector();
 		goal.accept(constraintCollector, null);
 

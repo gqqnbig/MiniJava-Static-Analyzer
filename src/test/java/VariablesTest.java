@@ -1,3 +1,4 @@
+import baseVisitors.AllocationVisitor;
 import math.Variable;
 import nullPointerAnalysis.*;
 import org.junit.Assert;
@@ -25,6 +26,7 @@ public class VariablesTest
 
 		ProgramStructureCollector.init(goal);
 		ClassHierarchyAnalysis.init(goal);
+		goal.accept(new AllocationVisitor());
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 
@@ -62,9 +64,8 @@ public class VariablesTest
 	{
 		Path currentRelativePath = Paths.get("testcases/hw2/pair8.java");
 		String s = currentRelativePath.toAbsolutePath().toString();
-		File f=new File(s);
+		File f = new File(s);
 		System.out.println(f.exists());
-
 
 
 		FileInputStream stream = new FileInputStream("testcases/hw2/pair8.java");
@@ -74,6 +75,7 @@ public class VariablesTest
 
 		ProgramStructureCollector.init(goal);
 		ClassHierarchyAnalysis.init(goal);
+		goal.accept(new AllocationVisitor());
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 

@@ -1,3 +1,4 @@
+import baseVisitors.AllocationVisitor;
 import nullPointerAnalysis.ProgramStructureCollector;
 import nullPointerAnalysis.Solver;
 import org.junit.Assert;
@@ -21,6 +22,8 @@ public class SimpleArrayTest
 
 		ProgramStructureCollector.init(goal);
 		ClassHierarchyAnalysis.init(goal);
+		goal.accept(new AllocationVisitor());
+
 		Assert.assertTrue("SimpleArrayTest may throw null pointer exception, but we didn't detect it.", Solver.checkNullPointer(goal, new PrintStream(OutputStream.nullOutputStream())));
 
 	}

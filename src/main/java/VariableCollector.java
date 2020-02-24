@@ -1,3 +1,4 @@
+import baseVisitors.AllocationVisitor;
 import baseVisitors.VoidScopeVisitor;
 import nullPointerAnalysis.*;
 import syntaxtree.*;
@@ -49,20 +50,22 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 	@Override
 	public void visitScope(ClassDeclaration n, Location argu)
 	{
-		n.f4.accept(this, null);
+		if (AllocationVisitor.usedClasses.contains(getClassName()))
+			n.f4.accept(this, null);
 	}
 
 	@Override
 	protected void visitScope(ClassExtendsDeclaration n, Location argu)
 	{
-		n.f6.accept(this, null);
+		if (AllocationVisitor.usedClasses.contains(getClassName()))
+			n.f6.accept(this, null);
 	}
 
 
 	@Override
 	public void visit(MessageSend n, Location argu)
 	{
-		variables.add(new VariableRes(n,argu));
+		variables.add(new VariableRes(n, argu));
 		super.visit(n, argu);
 	}
 
@@ -88,8 +91,8 @@ public class VariableCollector extends VoidScopeVisitor<Location>
 
 		//if (n.f0.choice instanceof AllocationExpression == false)
 		//{
-			VariableRes vRes = new VariableRes(n, argu);
-			variables.add(vRes);
+		VariableRes vRes = new VariableRes(n, argu);
+		variables.add(vRes);
 		//}
 		super.visit(n, argu);
 	}

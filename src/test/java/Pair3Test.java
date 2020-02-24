@@ -1,3 +1,4 @@
+import baseVisitors.AllocationVisitor;
 import nullPointerAnalysis.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -18,6 +19,8 @@ public class Pair3Test
 
 		ProgramStructureCollector.init(goal);
 		ClassHierarchyAnalysis.init(goal);
+		goal.accept(new AllocationVisitor());
+
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 

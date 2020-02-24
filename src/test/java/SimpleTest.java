@@ -1,3 +1,4 @@
+import baseVisitors.AllocationVisitor;
 import baseVisitors.MessageSendCollector;
 import nullPointerAnalysis.*;
 import org.junit.Assert;
@@ -24,6 +25,8 @@ public class SimpleTest
 
 		ProgramStructureCollector.init(goal);
 		ClassHierarchyAnalysis.init(goal);
+		goal.accept(new AllocationVisitor());
+
 		VariableCollector variableCollector = new VariableCollector();
 		goal.accept(variableCollector, null);
 
