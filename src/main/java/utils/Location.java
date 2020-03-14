@@ -6,11 +6,23 @@ import syntaxtree.Statement;
 
 import java.util.Objects;
 
+/**
+ * represents line and column number.
+ */
 public class Location implements Comparable<Location>
 {
 
 	private int line;
 	private int column;
+
+	/**
+	 * An unknown location, for example the line calls the main method.
+	 */
+	public Location()
+	{
+		line = -1;
+		column = -1;
+	}
 
 	public Location(Statement statement)
 	{
@@ -44,6 +56,9 @@ public class Location implements Comparable<Location>
 	@Override
 	public String toString()
 	{
+		if (line == -1)
+			return "unknown";
+
 		if (Options.shortform)
 			return "L" + line;
 		else
