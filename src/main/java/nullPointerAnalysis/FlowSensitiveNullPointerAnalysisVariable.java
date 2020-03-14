@@ -34,6 +34,10 @@ public abstract class FlowSensitiveNullPointerAnalysisVariable<TInput> implement
 		return statement;
 	}
 
+	/**
+	 * A math function is considered as a variable. This method returns the name of the math function.
+	 * @return
+	 */
 	@Override
 	public abstract String getFunctionName();
 

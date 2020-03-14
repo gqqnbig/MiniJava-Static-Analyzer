@@ -6,6 +6,7 @@ import baseVisitors.VoidScopeVisitor;
 import syntaxtree.*;
 import typeAnalysis.ClassHierarchyAnalysis;
 import utils.Location;
+import utils.ObjectIdentifierDefinition;
 import utils.Scope;
 
 import java.util.ArrayList;

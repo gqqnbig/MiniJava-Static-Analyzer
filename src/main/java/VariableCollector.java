@@ -4,6 +4,7 @@ import nullPointerAnalysis.*;
 import syntaxtree.*;
 import utils.FlowSensitiveVariable;
 import utils.Location;
+import utils.ObjectIdentifierDefinition;
 import utils.Scope;
 
 import java.util.ArrayList;

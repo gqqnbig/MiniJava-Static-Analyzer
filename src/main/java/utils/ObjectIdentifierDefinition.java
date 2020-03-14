@@ -1,4 +1,4 @@
-package nullPointerAnalysis;
+package utils;
 
 import syntaxtree.Identifier;
 import utils.Options;

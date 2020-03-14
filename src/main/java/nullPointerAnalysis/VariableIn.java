@@ -1,6 +1,7 @@
 package nullPointerAnalysis;
 
 import utils.Location;
+import utils.ObjectIdentifierDefinition;
 
 public class VariableIn extends FlowSensitiveNullPointerAnalysisVariable<ObjectIdentifierDefinition>
 {

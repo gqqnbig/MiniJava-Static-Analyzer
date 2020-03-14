@@ -3,6 +3,7 @@ package nullPointerAnalysis;
 import baseVisitors.ParameterCollector;
 import syntaxtree.*;
 import utils.Location;
+import utils.ObjectIdentifierDefinition;
 import utils.Scope;
 
 import java.util.*;
