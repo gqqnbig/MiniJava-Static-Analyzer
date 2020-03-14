@@ -17,8 +17,8 @@ import java.util.Objects;
  */
 public abstract class FlowSensitiveNullPointerAnalysisVariable<TInput> implements Variable<TInput, AnalysisResult>, FlowSensitiveVariable<TInput, AnalysisResult>, AnalysisResult
 {
-	protected Location statement;
-	TInput input;
+	protected final Location statement;
+	private final TInput input;
 
 	public FlowSensitiveNullPointerAnalysisVariable(TInput input, Location statement)
 	{
