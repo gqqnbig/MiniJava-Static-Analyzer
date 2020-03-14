@@ -1,9 +1,9 @@
 package utils;
 
+import math.Domain;
 import math.Variable;
-import nullPointerAnalysis.AnalysisResult;
 
-public interface FlowSensitiveVariable<TInput, TOutput extends AnalysisResult> extends Variable<TInput, TOutput>
+public interface FlowSensitiveVariable<TInput, TOutput extends Domain> extends Variable<TInput, TOutput>
 {
 	Location getStatement();
 }
