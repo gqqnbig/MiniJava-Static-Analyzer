@@ -3,10 +3,10 @@ package numericalAnalysis;
 import utils.Location;
 import utils.ObjectIdentifierDefinition;
 
-public class VariableIn extends ConstraintVariable<ObjectIdentifierDefinition>
+public class VariableIn extends ConstraintVariable<IntIdentifierDefinition>
 {
 
-	public VariableIn(ObjectIdentifierDefinition input, Location statement, Location callSite)
+	public VariableIn(IntIdentifierDefinition input, Location statement, Location callSite)
 	{
 		super(input, statement, callSite);
 	}
