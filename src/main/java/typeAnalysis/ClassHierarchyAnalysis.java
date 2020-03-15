@@ -11,7 +11,6 @@ import java.util.Objects;
 
 public class ClassHierarchyAnalysis
 {
-	private static Goal goal;
 	private static HashMap<String, HashSet<Tuple<String, Integer>>> classMethodMapping;
 	public static HashMap<String, String> superClassHierarchy;
 	/**
@@ -21,7 +20,6 @@ public class ClassHierarchyAnalysis
 
 	public static void init(Goal goal)
 	{
-		ClassHierarchyAnalysis.goal = goal;
 		if (ProgramStructureCollector.classMethodMapping == null || ProgramStructureCollector.classMethodMapping.size() == 0)
 		{
 			ProgramStructureCollector cmv = new ProgramStructureCollector();
@@ -82,51 +80,6 @@ public class ClassHierarchyAnalysis
 		}
 		return m2c;
 	}
-//
-//	public static HashMap<String, HashSet<String>> c2mTOm2c(HashMap<String, HashSet<String>> c2m,
-//															List<String> rootlist, HashMap<String, HashSet<String>> cha)
-//	{
-//		HashMap<String, HashSet<String>> m2c = new HashMap<String, HashSet<String>>();
-//		for (String rootclass : rootlist)
-//		{
-//			for (String method : c2m.get(rootclass))
-//			{
-//				if (!m2c.containsKey(method))
-//				{
-//					m2c.put(method, new HashSet<String>());
-//				}
-//				m2c.get(method).add(rootclass);
-//			}
-//			dfs(c2m, rootclass, cha, m2c);
-//		}
-//		return m2c;
-//	}
-//
-//	public static void dfs(HashMap<String, HashSet<String>> c2m,
-//						   String parent, HashMap<String, HashSet<String>> cha, HashMap<String, HashSet<String>> m2c)
-//	{
-//		if (cha.containsKey(parent))
-//		{
-//			for (String child : cha.get(parent))
-//			{
-//				// complete class to method
-//				for (String method : c2m.get(parent))
-//				{
-//					c2m.get(child).add(method);
-//				}
-//				// method to class
-//				for (String method : c2m.get(child))
-//				{
-//					if (!m2c.containsKey(method))
-//					{
-//						m2c.put(method, new HashSet<String>());
-//					}
-//					m2c.get(method).add(child);
-//				}
-//				dfs(c2m, child, cha, m2c);
-//			}
-//		}
-//	}
 }
 
 class Tuple<T1, T2>
