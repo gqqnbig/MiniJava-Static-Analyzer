@@ -1,6 +1,7 @@
 package utils;
 
 import baseVisitors.StatementStartVisitor;
+import syntaxtree.Identifier;
 import syntaxtree.NodeToken;
 import syntaxtree.Statement;
 
@@ -41,6 +42,12 @@ public class Location implements Comparable<Location>
 
 		line = returnStatement.beginLine;
 		column = returnStatement.beginColumn;
+	}
+
+	public Location(Identifier methodName)
+	{
+		line = methodName.f0.beginLine;
+		column = methodName.f0.beginColumn;
 	}
 
 	public int getLine()

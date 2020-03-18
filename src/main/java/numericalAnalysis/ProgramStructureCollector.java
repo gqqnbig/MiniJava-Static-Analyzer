@@ -2,6 +2,7 @@ package numericalAnalysis;
 
 import baseVisitors.ParameterCollector;
 import syntaxtree.*;
+import typeAnalysis.MethodSignature;
 import utils.Location;
 import utils.Scope;
 
@@ -12,6 +13,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	static ArrayList<IntIdentifierDefinition> integers;
 	static HashMap<Tuple, ArrayList<JumpInfo>> statementOrderData;
 	static HashMap<Tuple, Expression> returnExpressions;
+	static HashMap<MethodSignature, Set<Location>> callsites;
 
 //region static methods
 
@@ -300,6 +302,20 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 
 		return null;
 //		return super.visit(n);
+	}
+
+	@Override
+	public Object visit(MessageSend n)
+	{
+		ParameterCollector p = new ParameterCollector();
+		n.f4.accept(p);
+		MethodSignature s = new MethodSignature(n.f2.f0.toString(), p.parameters.size());
+
+		Location l = new Location(n.f2);
+		Set<Location> list = callsites.computeIfAbsent(s, k -> new HashSet<>());
+		list.add(l);
+
+		return super.visit(n);
 	}
 }
 
