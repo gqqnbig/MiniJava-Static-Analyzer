@@ -3,6 +3,7 @@ package typeAnalysis;
 import syntaxtree.Goal;
 import syntaxtree.Identifier;
 import syntaxtree.PrimaryExpression;
+import utils.Tuple;
 
 import java.util.Collection;
 import java.util.HashMap;

@@ -6,6 +6,7 @@ import syntaxtree.ClassDeclaration;
 import syntaxtree.ClassExtendsDeclaration;
 import syntaxtree.MainClass;
 import syntaxtree.MethodDeclaration;
+import utils.Tuple;
 
 import java.util.HashMap;
 import java.util.HashSet;
