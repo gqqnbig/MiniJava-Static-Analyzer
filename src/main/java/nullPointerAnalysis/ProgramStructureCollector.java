@@ -5,6 +5,7 @@ import syntaxtree.*;
 import utils.Location;
 import utils.ObjectIdentifierDefinition;
 import utils.Scope;
+import utils.Tuple;
 
 import java.util.*;
 
@@ -13,9 +14,9 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	static ArrayList<ObjectIdentifierDefinition> objects;
 	//	static HashMap<Tuple, Location> lastStatementData;
 //	static HashMap<Tuple, Location> firstStatementData;
-	static HashMap<Tuple, ArrayList<JumpInfo>> statementOrderData;
+	static HashMap<Tuple<String, String>, ArrayList<JumpInfo>> statementOrderData;
 	//	static HashMap<Location, Integer> additionalJumps;
-	static HashMap<Tuple, Expression> returnExpressions;
+	static HashMap<Tuple<String, String>, Expression> returnExpressions;
 //	static HashMap<Tuple, ObjectIdentifierDefinition> methodParameterInfos;
 
 //region static methods
@@ -312,39 +313,6 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 
 		return null;
 //		return super.visit(n);
-	}
-}
-
-class Tuple
-{
-	public String item1;
-	public String item2;
-
-
-	public Tuple()
-	{
-	}
-
-	public Tuple(String item1, String item2)
-	{
-		this.item1 = item1;
-		this.item2 = item2;
-	}
-
-	@Override
-	public boolean equals(Object o)
-	{
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Tuple tuple = (Tuple) o;
-		return Objects.equals(item1, tuple.item1) &&
-				Objects.equals(item2, tuple.item2);
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return Objects.hash(item1, item2);
 	}
 }
 

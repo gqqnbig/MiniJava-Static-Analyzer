@@ -5,6 +5,7 @@ import syntaxtree.*;
 import typeAnalysis.MethodSignature;
 import utils.Location;
 import utils.Scope;
+import utils.Tuple;
 
 import java.util.*;
 
@@ -319,38 +320,38 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	}
 }
 
-class Tuple
-{
-	public String item1;
-	public String item2;
-
-
-	public Tuple()
-	{
-	}
-
-	public Tuple(String item1, String item2)
-	{
-		this.item1 = item1;
-		this.item2 = item2;
-	}
-
-	@Override
-	public boolean equals(Object o)
-	{
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Tuple tuple = (Tuple) o;
-		return Objects.equals(item1, tuple.item1) &&
-				Objects.equals(item2, tuple.item2);
-	}
-
-	@Override
-	public int hashCode()
-	{
-		return Objects.hash(item1, item2);
-	}
-}
+//class Tuple
+//{
+//	public String item1;
+//	public String item2;
+//
+//
+//	public Tuple()
+//	{
+//	}
+//
+//	public Tuple(String item1, String item2)
+//	{
+//		this.item1 = item1;
+//		this.item2 = item2;
+//	}
+//
+//	@Override
+//	public boolean equals(Object o)
+//	{
+//		if (this == o) return true;
+//		if (o == null || getClass() != o.getClass()) return false;
+//		Tuple tuple = (Tuple) o;
+//		return Objects.equals(item1, tuple.item1) &&
+//				Objects.equals(item2, tuple.item2);
+//	}
+//
+//	@Override
+//	public int hashCode()
+//	{
+//		return Objects.hash(item1, item2);
+//	}
+//}
 
 class JumpInfo
 {
