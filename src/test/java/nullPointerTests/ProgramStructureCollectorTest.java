@@ -1,3 +1,5 @@
+package nullPointerTests;
+
 import nullPointerAnalysis.ProgramStructureCollector;
 import org.junit.Assert;
 import org.junit.Test;

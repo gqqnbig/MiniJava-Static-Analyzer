@@ -1,3 +1,5 @@
+package nullPointerTests;
+
 import baseVisitors.AllocationVisitor;
 import baseVisitors.ArrayLookupVisitor;
 import baseVisitors.MessageSendCollector;

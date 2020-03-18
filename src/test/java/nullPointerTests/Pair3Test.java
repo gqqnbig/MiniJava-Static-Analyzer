@@ -1,3 +1,5 @@
+package nullPointerTests;
+
 import baseVisitors.AllocationVisitor;
 import nullPointerAnalysis.*;
 import org.junit.Assert;

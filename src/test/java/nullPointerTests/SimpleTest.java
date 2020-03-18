@@ -1,3 +1,5 @@
+package nullPointerTests;
+
 import baseVisitors.AllocationVisitor;
 import baseVisitors.MessageSendCollector;
 import nullPointerAnalysis.*;

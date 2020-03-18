@@ -1,3 +1,5 @@
+package nullPointerTests;
+
 import baseVisitors.AllocationVisitor;
 import math.Variable;
 import nullPointerAnalysis.*;

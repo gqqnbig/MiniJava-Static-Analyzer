@@ -1,3 +1,5 @@
+package nullPointerTests;
+
 import nullPointerAnalysis.NotNullLiteral;
 import nullPointerAnalysis.PossibleNullLiteral;
 import nullPointerAnalysis.UnionFunction;
