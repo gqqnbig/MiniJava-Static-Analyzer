@@ -78,7 +78,7 @@ public class NumericalAssertionChecker
 		@Override
 		public void visitScope(MainClass n, VariableAuxiliaryData argu)
 		{
-			integersInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
+			integersInScope = ProgramStructureCollector.getIntegerIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 
 			VariableAuxiliaryData d = new VariableAuxiliaryData(null, new Location());
 			n.f15.accept(this, d);
@@ -87,7 +87,7 @@ public class NumericalAssertionChecker
 		@Override
 		public void visitScope(MethodDeclaration n, VariableAuxiliaryData argu)
 		{
-			integersInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
+			integersInScope = ProgramStructureCollector.getIntegerIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 
 			ParameterCollector p = new ParameterCollector();
 			n.f4.accept(p);

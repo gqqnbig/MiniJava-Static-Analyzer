@@ -41,7 +41,37 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		return scopeNullables;
 	}
 
-	public static List<IntIdentifierDefinition> getNullableIdentifiersInScope(Scope scope)
+	public static List<IntIdentifierDefinition> getVariableIdentifiersInScope(Scope scope)
+	{
+		List<IntIdentifierDefinition> scopeNullables = new ArrayList<>();
+		for (IntIdentifierDefinition entry : integers)
+		{
+			if (entry.Class.equals(scope.Class) && Objects.equals(entry.Method, scope.Method))
+				scopeNullables.add(entry);
+		}
+		return scopeNullables;
+	}
+
+	public static List<IntIdentifierDefinition> getFieldIdentifiersInScope(Scope scope)
+	{
+		List<IntIdentifierDefinition> scopeNullables = new ArrayList<>();
+		for (IntIdentifierDefinition entry : integers)
+		{
+			if (entry.Class.equals(scope.Class) && entry.Method == null) //fields are available in a method.
+				scopeNullables.add(entry);
+		}
+
+		String className = typeAnalysis.ClassHierarchyAnalysis.superClassHierarchy.get(scope.Class);
+		while (className != null)
+		{
+			scopeNullables.addAll(getNullableFieldsDefinedInClass(className));
+			className = superClassHierarchy.get(className);
+		}
+
+		return scopeNullables;
+	}
+
+	public static List<IntIdentifierDefinition> getIntegerIdentifiersInScope(Scope scope)
 	{
 		List<IntIdentifierDefinition> scopeNullables = new ArrayList<>();
 		for (IntIdentifierDefinition entry : integers)
@@ -62,9 +92,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	}
 
 	/**
-	 * Get definition of a nullable identifier from the identifier usage.
-	 * <p>
-	 * If the identifier is not nullable, eg. int, return null.
+	 * Get definition of an identifier from the identifier usage.
 	 *
 	 * @param identifier
 	 * @return
@@ -72,7 +100,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public static IntIdentifierDefinition getDefinition(Identifier identifier, Scope scope)
 	{
 		IntIdentifierDefinition fieldDefinition = null;
-		for (IntIdentifierDefinition d : getNullableIdentifiersInScope(scope))
+		for (IntIdentifierDefinition d : getIntegerIdentifiersInScope(scope))
 		{
 			if (d.getIdentifier().equals(identifier.f0.toString()))
 			{
