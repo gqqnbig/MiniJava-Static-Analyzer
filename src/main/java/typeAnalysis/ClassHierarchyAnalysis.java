@@ -5,19 +5,19 @@ import syntaxtree.Identifier;
 import syntaxtree.PrimaryExpression;
 import utils.Tuple;
 
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Objects;
 
 public class ClassHierarchyAnalysis
 {
-	private static HashMap<String, HashSet<Tuple<String, Integer>>> classMethodMapping;
+	private static HashMap<String, HashSet<MethodSignature>> classMethodMapping;
 	public static HashMap<String, String> superClassHierarchy;
 	/**
 	 * given a method name, return the classes where the given method can be called.
 	 */
-	private static HashMap<Tuple<String, Integer>, HashSet<String>> methodAvailableInClassMapping;
+	private static HashMap<MethodSignature, HashSet<String>> methodAvailableInClassMapping;
 
 	public static void init(Goal goal)
 	{
@@ -60,15 +60,15 @@ public class ClassHierarchyAnalysis
 		return methodAvailableInClassMapping.get(new Tuple<>(methodName, parameterCount));
 	}
 
-	static HashMap<Tuple<String, Integer>, HashSet<String>> c2mTOm2c(HashMap<String, HashSet<Tuple<String, Integer>>> c2m)
+	static HashMap<MethodSignature, HashSet<String>> c2mTOm2c(HashMap<String, HashSet<MethodSignature>> c2m)
 	{
-		HashMap<Tuple<String, Integer>, HashSet<String>> m2c = new HashMap<>();
+		HashMap<MethodSignature, HashSet<String>> m2c = new HashMap<>();
 		for (String thisClass : c2m.keySet())
 		{
 			String searchingClass = thisClass;
 			while (searchingClass != null)
 			{
-				for (Tuple<String, Integer> methodInfo : c2m.get(searchingClass))
+				for (MethodSignature methodInfo : c2m.get(searchingClass))
 				{
 					if (!m2c.containsKey(methodInfo))
 					{

@@ -1,4 +1,5 @@
 import baseVisitors.AllocationVisitor;
+import baseVisitors.ParameterCollector;
 import baseVisitors.VoidScopeVisitor;
 import numericalAnalysis.*;
 import syntaxtree.*;
@@ -10,6 +11,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class NumericalAssertionChecker
 {
@@ -65,75 +67,98 @@ public class NumericalAssertionChecker
 	}
 
 
-	static class VariableCollector extends VoidScopeVisitor<Location>
+	static class VariableCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 	{
 		ArrayList<ConstraintVariable> variables = new ArrayList<>();
 		List<IntIdentifierDefinition> nullablesInScope;
 
 
 		@Override
-		public void visitScope(MainClass n, Location argu)
+		public void visitScope(MainClass n, VariableAuxiliaryData argu)
 		{
 			nullablesInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
-			n.f15.accept(this, null);
+
+			VariableAuxiliaryData d = new VariableAuxiliaryData(null, new Location());
+			n.f15.accept(this, d);
 		}
 
 		@Override
-		public void visitScope(MethodDeclaration n, Location argu)
+		public void visitScope(MethodDeclaration n, VariableAuxiliaryData argu)
 		{
 			nullablesInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
-			n.f8.accept(this, null);
+
+			ParameterCollector p = new ParameterCollector();
+			n.f4.accept(p);
+
+			Set<Location> callSites = ProgramStructureCollector.getCallsites(getClassName(), getMethodName(), p.parameters.size());
+			for (Location callSite : callSites)
+			{
+				VariableAuxiliaryData d = new VariableAuxiliaryData(null, callSite);
+				n.f8.accept(this, d);
+			}
 		}
 
 		@Override
-		public void visitScope(ClassDeclaration n, Location argu)
+		public void visitScope(ClassDeclaration n, VariableAuxiliaryData argu)
 		{
 			n.f4.accept(this, null);
 		}
 
 		@Override
-		protected void visitScope(ClassExtendsDeclaration n, Location argu)
+		protected void visitScope(ClassExtendsDeclaration n, VariableAuxiliaryData argu)
 		{
 			n.f6.accept(this, null);
 		}
 
 
 		@Override
-		public void visit(MessageSend n, Location argu)
+		public void visit(MessageSend n, VariableAuxiliaryData argu)
 		{
-			variables.add(new VariableRes(n, argu, new Location()));
+			variables.add(new VariableRes(n, argu.statement, argu.callSite));
 			super.visit(n, argu);
 		}
 
 
 		@Override
-		public void visit(Statement n, Location argu)
+		public void visit(Statement n, VariableAuxiliaryData argu)
 		{
-			Location location = new Location(n);
+			argu.statement = new Location(n);
 			for (var nullable : nullablesInScope)
 			{
-				variables.add(new VariableIn(nullable, location, new Location()));
-				variables.add(new VariableOut(nullable, location, new Location()));
+				variables.add(new VariableIn(nullable, argu.statement, argu.callSite));
+				variables.add(new VariableOut(nullable, argu.statement, argu.callSite));
 			}
 
-			super.visit(n, location);
+			super.visit(n, argu);
 		}
 
 		@Override
-		public void visit(Expression n, Location argu)
+		public void visit(Expression n, VariableAuxiliaryData argu)
 		{
 			assert argu != null;
 
-			VariableRes vRes = new VariableRes(n, argu, new Location());
+			VariableRes vRes = new VariableRes(n, argu.statement, argu.callSite);
 			variables.add(vRes);
 
 			super.visit(n, argu);
 		}
 
 		@Override
-		public void visit(AllocationExpression n, Location argu)
+		public void visit(AllocationExpression n, VariableAuxiliaryData argu)
 		{
-			variables.add(new VariableRes(n, argu, new Location()));
+			variables.add(new VariableRes(n, argu.statement, argu.callSite));
+		}
+	}
+
+	static class VariableAuxiliaryData
+	{
+		Location statement;
+		Location callSite;
+
+		public VariableAuxiliaryData(Location statement, Location callSite)
+		{
+			this.statement = statement;
+			this.callSite = callSite;
 		}
 	}
 }

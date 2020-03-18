@@ -1,5 +1,6 @@
 package numericalAnalysis;
 
+import baseVisitors.ArgumentsCollector;
 import baseVisitors.ParameterCollector;
 import syntaxtree.*;
 import typeAnalysis.MethodSignature;
@@ -119,6 +120,7 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		integers = new ArrayList<>();
 		statementOrderData = new HashMap<>();
 		returnExpressions = new HashMap<>();
+		callsites = new HashMap<>();
 	}
 
 	public static List<Location> getSuccessors(String className, String methodName, Location location)
@@ -163,6 +165,16 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 	public static Expression getReturnExpression(String className, String methodName)
 	{
 		return returnExpressions.get(new Tuple(className, methodName));
+	}
+
+	/**
+	 * find the locations that call this method.
+	 *
+	 * @return
+	 */
+	public static Set<Location> getCallsites(String className, String methodName, int parameterCount)
+	{
+		return callsites.get(new MethodSignature(methodName, parameterCount));
 	}
 
 
@@ -301,16 +313,15 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 			data.get(data.size() - 1).additionalJump = jumpIndex;
 		}
 
-		return null;
-//		return super.visit(n);
+		return super.visit(n);
 	}
 
 	@Override
 	public Object visit(MessageSend n)
 	{
-		ParameterCollector p = new ParameterCollector();
+		ArgumentsCollector p = new ArgumentsCollector();
 		n.f4.accept(p);
-		MethodSignature s = new MethodSignature(n.f2.f0.toString(), p.parameters.size());
+		MethodSignature s = new MethodSignature(n.f2.f0.toString(), p.arguments.size());
 
 		Location l = new Location(n.f2);
 		Set<Location> list = callsites.computeIfAbsent(s, k -> new HashSet<>());

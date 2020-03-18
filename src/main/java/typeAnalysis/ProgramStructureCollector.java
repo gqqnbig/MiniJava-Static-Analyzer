@@ -11,14 +11,6 @@ import utils.Tuple;
 import java.util.HashMap;
 import java.util.HashSet;
 
-//// typdefs
-//class ClassSet extends HashSet<String>
-//{
-//}
-
-//class Mapping extends HashMap<String, ClassSet>
-//{
-//}
 
 // R = [ method -> {classname} ] 
 // A = classname 
@@ -36,12 +28,12 @@ import java.util.HashSet;
  */
 public class ProgramStructureCollector extends ScopeVisitor<Object>
 {
-	protected static HashMap<String, HashSet<Tuple<String, Integer>>> classMethodMapping;
+	public static HashMap<String, HashSet<MethodSignature>> classMethodMapping;
 
 	/*
 	map from subclass to its superclass
 	 */
-	protected static HashMap<String, String> superClassHierarchy;
+	public static HashMap<String, String> superClassHierarchy;
 
 	public static void init()
 	{
@@ -49,7 +41,7 @@ public class ProgramStructureCollector extends ScopeVisitor<Object>
 
 	}
 
-	protected ProgramStructureCollector()
+	public ProgramStructureCollector()
 	{
 		classMethodMapping = new HashMap<>();
 		superClassHierarchy = new HashMap<>();
@@ -59,8 +51,8 @@ public class ProgramStructureCollector extends ScopeVisitor<Object>
 	@Override
 	public Object visitScope(MainClass n)
 	{
-		HashSet<Tuple<String, Integer>> methods = new HashSet<>();
-		methods.add(new Tuple<>("main", 1));
+		HashSet<MethodSignature> methods = new HashSet<>();
+		methods.add(new MethodSignature("main", 1));
 		classMethodMapping.put(getClassName(), methods);
 
 		return null;
@@ -71,7 +63,7 @@ public class ProgramStructureCollector extends ScopeVisitor<Object>
 	{
 		ParameterCollector parameterCollector = new ParameterCollector();
 		n.f4.accept(parameterCollector);
-		classMethodMapping.get(getClassName()).add(new Tuple<>(getMethodName(), parameterCollector.parameters.size()));
+		classMethodMapping.get(getClassName()).add(new MethodSignature(getMethodName(), parameterCollector.parameters.size()));
 		return null;
 	}
 
