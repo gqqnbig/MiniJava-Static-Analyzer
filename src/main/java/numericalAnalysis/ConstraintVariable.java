@@ -6,9 +6,9 @@ import utils.Location;
 
 import java.util.Objects;
 
-public abstract class ConstraintVariable<TInput> implements FlowSensitiveVariable<TInput, AnalysisResult>,
-		ContextSensitiveVariable<TInput, AnalysisResult>,
-		AnalysisResult
+public abstract class ConstraintVariable<TInput> implements FlowSensitiveVariable<TInput, Interval>,
+		ContextSensitiveVariable<TInput, Interval>,
+		Interval
 {
 	protected final Location statement;
 	protected final Location callSite;
@@ -50,7 +50,7 @@ public abstract class ConstraintVariable<TInput> implements FlowSensitiveVariabl
 		return input;
 	}
 
-//	public Literal<AnalysisResult> getReturnValue(Collection<EqualityRelationship> constraints)
+//	public Literal<Interval> getReturnValue(Collection<EqualityRelationship> constraints)
 //	{
 //		if (constraints.stream().anyMatch(e -> Solver.findLiteral(this, constraints) == PossibleNullLiteral.instance))
 //			return PossibleNullLiteral.instance;

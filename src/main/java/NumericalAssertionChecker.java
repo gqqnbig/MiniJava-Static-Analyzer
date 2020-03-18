@@ -58,11 +58,13 @@ public class NumericalAssertionChecker
 				debugOut.println(variable);
 			}
 		}
-//		Solver.debugOut = debugOut;
-//		if (Solver.checkNullPointer(goal))
-//			System.out.println("null pointer error");
-//		else
-//			System.out.println("Has no null-pointer problems");
+
+		Solver solver=new Solver();
+		solver.debugOut = debugOut;
+		if (solver.alwaysGreaterThan0(goal))
+			System.out.println("The program prints only integers that are greater than zero");
+		else
+			System.out.println("The program prints at least one integer that is less than or equal to zero");
 
 	}
 
@@ -70,13 +72,13 @@ public class NumericalAssertionChecker
 	static class VariableCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 	{
 		ArrayList<ConstraintVariable> variables = new ArrayList<>();
-		List<IntIdentifierDefinition> nullablesInScope;
+		List<IntIdentifierDefinition> integersInScope;
 
 
 		@Override
 		public void visitScope(MainClass n, VariableAuxiliaryData argu)
 		{
-			nullablesInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
+			integersInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 
 			VariableAuxiliaryData d = new VariableAuxiliaryData(null, new Location());
 			n.f15.accept(this, d);
@@ -85,7 +87,7 @@ public class NumericalAssertionChecker
 		@Override
 		public void visitScope(MethodDeclaration n, VariableAuxiliaryData argu)
 		{
-			nullablesInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
+			integersInScope = ProgramStructureCollector.getNullableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 
 			ParameterCollector p = new ParameterCollector();
 			n.f4.accept(p);
@@ -123,7 +125,7 @@ public class NumericalAssertionChecker
 		public void visit(Statement n, VariableAuxiliaryData argu)
 		{
 			argu.statement = new Location(n);
-			for (var nullable : nullablesInScope)
+			for (var nullable : integersInScope)
 			{
 				variables.add(new VariableIn(nullable, argu.statement, argu.callSite));
 				variables.add(new VariableOut(nullable, argu.statement, argu.callSite));
@@ -147,18 +149,6 @@ public class NumericalAssertionChecker
 		public void visit(AllocationExpression n, VariableAuxiliaryData argu)
 		{
 			variables.add(new VariableRes(n, argu.statement, argu.callSite));
-		}
-	}
-
-	static class VariableAuxiliaryData
-	{
-		Location statement;
-		Location callSite;
-
-		public VariableAuxiliaryData(Location statement, Location callSite)
-		{
-			this.statement = statement;
-			this.callSite = callSite;
 		}
 	}
 }
