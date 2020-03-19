@@ -61,10 +61,11 @@ public class NumericalAssertionChecker
 
 		Solver solver=new Solver();
 		solver.debugOut = debugOut;
-		if (solver.alwaysGreaterThan0(goal))
-			System.out.println("The program prints only integers that are greater than zero");
-		else
-			System.out.println("The program prints at least one integer that is less than or equal to zero");
+		solver.solve(goal);
+//		if (solver.alwaysGreaterThan0(goal))
+//			System.out.println("The program prints only integers that are greater than zero");
+//		else
+//			System.out.println("The program prints at least one integer that is less than or equal to zero");
 
 	}
 

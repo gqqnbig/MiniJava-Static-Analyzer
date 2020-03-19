@@ -1,14 +1,19 @@
 package numericalAnalysis;
 
+import math.EquationSolver;
+import math.Literal;
 import syntaxtree.Goal;
+import utils.FlowSensitiveVariable;
+import utils.Options;
 
 import java.io.PrintStream;
+import java.util.*;
 
-public class Solver
+public class Solver extends EquationSolver<Interval>
 {
 	public PrintStream debugOut;
 
-	public boolean alwaysGreaterThan0(Goal goal)
+	public List<EqualityRelationship> solve(Goal goal)
 	{
 		ConstraintCollector constraintCollector = new ConstraintCollector();
 		goal.accept(constraintCollector, null);
@@ -18,6 +23,103 @@ public class Solver
 			debugOut.println(r);
 		}
 
-		return true;
+
+		List<EqualityRelationship> solutions = solve(constraintCollector.constraints);
+		debugOut.println("\nSolutions:");
+		for (EqualityRelationship r : solutions)
+		{
+			debugOut.println(r);
+		}
+
+		return solutions;
+	}
+
+
+	/**
+	 * Return literal solution of all variables, ie. VariableIn, VariableOut, VariableRes.
+	 *
+	 * @param constraints
+	 * @return
+	 */
+	ArrayList<EqualityRelationship> solve(List<EqualityRelationship> constraints)
+	{
+		//Clear up single union
+		clearUpSingleUnion(constraints);
+		HashSet<EqualityRelationship> workingset = new HashSet<>(constraints);
+
+		boolean hasChange;
+		do
+		{
+			hasChange = false;
+
+			constraints = new ArrayList<>(workingset);
+			for (int i = 0; i < constraints.size(); i++)
+			{
+				EqualityRelationship r = constraints.get(i);
+				if (r.right instanceof Literal)
+					continue;
+
+				Literal<Interval> rightL = null;
+				if (r.right instanceof ConstraintVariable)
+					rightL = ((ConstraintVariable) r.right).getReturnValue(constraints, this);
+				else if (r.right instanceof UnionFunction)
+					rightL = ((UnionFunction) r.right).getReturnValue(constraints, this);
+
+				Literal<Interval> leftL = null;
+				if (r.left instanceof ConstraintVariable)
+					leftL = ((ConstraintVariable) r.left).getReturnValue(constraints, this);
+				else if (r.left instanceof UnionFunction)
+					leftL = ((UnionFunction) r.left).getReturnValue(constraints, this);
+
+				if (leftL == null && rightL != null)
+				{
+					EqualityRelationship newEquality = new EqualityRelationship(r.left, (Interval) rightL);
+					hasChange = workingset.add(newEquality) || hasChange;
+				}
+				else if (leftL != null && rightL == null)
+				{
+					EqualityRelationship newEquality = new EqualityRelationship(r.right, (Interval) leftL);
+					hasChange = workingset.add(newEquality) || hasChange;
+				}
+				else if (leftL != null && rightL != null)
+				{
+					Literal<Interval> l = UnionFunction.union(leftL, rightL);
+					hasChange = workingset.add(new EqualityRelationship(r.left, (Interval) l)) || hasChange;
+					hasChange = workingset.add(new EqualityRelationship(r.right, (Interval) l)) || hasChange;
+				}
+			}
+		}
+		while (hasChange);
+
+
+		ArrayList<EqualityRelationship> solutions = new ArrayList<>();
+		for (EqualityRelationship r : workingset)
+		{
+			if (r.left instanceof VariableRes && r.right instanceof Literal)
+				solutions.add(r);
+			if (r.left instanceof VariableOut && r.right instanceof Literal)
+				solutions.add(r);
+			if (r.left instanceof VariableIn && r.right instanceof Literal)
+				solutions.add(r);
+		}
+
+		if (Options.isDebug)
+			solutions.sort(new Comparator<EqualityRelationship>()
+			{
+				@Override
+				public int compare(EqualityRelationship o1, EqualityRelationship o2)
+				{
+					return ((FlowSensitiveVariable) o1.left).getStatement().compareTo(((FlowSensitiveVariable) o2.left).getStatement());
+				}
+			});
+
+		return solutions;
+
+	}
+
+	@Override
+	protected Literal<Interval> union(Literal<Interval> a, Literal<Interval> b)
+	{
+		return UnionFunction.union(a, b);
 	}
 }

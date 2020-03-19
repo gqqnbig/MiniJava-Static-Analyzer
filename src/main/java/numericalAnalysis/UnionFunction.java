@@ -11,10 +11,12 @@ public class UnionFunction implements FunctionUnion<Interval>, Interval
 {
 	public static Literal<Interval> union(Literal<Interval> a, Literal<Interval> b)
 	{
-		if (a instanceof LiteralInterval && b instanceof LiteralInterval)
+		if (a != null && b != null)
 			return new LiteralInterval(Math.min(((LiteralInterval) a).lowerBound, ((LiteralInterval) b).lowerBound), Math.max(((LiteralInterval) a).upperBound, ((LiteralInterval) b).upperBound));
+		else if (a != null)
+			return a;
 		else
-			throw new UnsupportedOperationException();
+			return b;
 	}
 
 	private List<Interval> inputArray = new ArrayList<>();
@@ -32,13 +34,22 @@ public class UnionFunction implements FunctionUnion<Interval>, Interval
 	}
 
 
-//	public Literal<Interval> getReturnValue(Collection<EqualityRelationship> constraints)
-//	{
-//		if (inputArray.stream().anyMatch(e -> Solver.findLiteral(e, constraints) == PossibleNullLiteral.instance))
-//			return PossibleNullLiteral.instance;
-//
-//		return null;
-//	}
+	public Literal<Interval> getReturnValue(Collection<EqualityRelationship> constraints, Solver solver)
+	{
+		Literal<Interval> result = null;
+		for (Interval element : inputArray)
+		{
+			Literal<Interval> l = solver.findLiteral(element, constraints);
+			if (l == null)
+				return null;
+			if (result == null)
+				result = l;
+			else
+				result = union(result, l);
+		}
+
+		return result;
+	}
 
 	@Override
 	public String toString()
@@ -53,4 +64,10 @@ public class UnionFunction implements FunctionUnion<Interval>, Interval
 		sb.delete(sb.length() - 2, sb.length());
 		return sb.toString();
 	}
+//
+//	@Override
+//	public Literal<Interval> unionHelper(Literal<Interval> a, Literal<Interval> b)
+//	{
+//		return UnionFunction.union(a,b);
+//	}
 }

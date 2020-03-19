@@ -1,9 +1,11 @@
 package numericalAnalysis;
 
+import math.Literal;
 import utils.ContextSensitiveVariable;
 import utils.FlowSensitiveVariable;
 import utils.Location;
 
+import java.util.Collection;
 import java.util.Objects;
 
 public abstract class ConstraintVariable<TInput> implements FlowSensitiveVariable<TInput, Interval>,
@@ -50,14 +52,10 @@ public abstract class ConstraintVariable<TInput> implements FlowSensitiveVariabl
 		return input;
 	}
 
-//	public Literal<Interval> getReturnValue(Collection<EqualityRelationship> constraints)
-//	{
-//		if (constraints.stream().anyMatch(e -> Solver.findLiteral(this, constraints) == PossibleNullLiteral.instance))
-//			return PossibleNullLiteral.instance;
-//		if (constraints.stream().anyMatch(e -> Solver.findLiteral(this, constraints) == NotNullLiteral.instance))
-//			return NotNullLiteral.instance;
-//		return null;
-//	}
+	public Literal<Interval> getReturnValue(Collection<EqualityRelationship> constraints, Solver solver)
+	{
+		return solver.findLiteral(this, constraints);
+	}
 
 
 	@Override
