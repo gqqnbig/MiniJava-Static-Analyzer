@@ -5,6 +5,7 @@ import numericalAnalysis.*;
 import syntaxtree.*;
 import typeAnalysis.ClassHierarchyAnalysis;
 import utils.*;
+import visitor.DepthFirstVisitor;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class NumericalAssertionChecker
 {
@@ -59,13 +61,22 @@ public class NumericalAssertionChecker
 			}
 		}
 
-		Solver solver=new Solver();
+		Solver solver = new Solver();
 		solver.debugOut = debugOut;
-		solver.solve(goal);
-//		if (solver.alwaysGreaterThan0(goal))
-//			System.out.println("The program prints only integers that are greater than zero");
-//		else
-//			System.out.println("The program prints at least one integer that is less than or equal to zero");
+		List<EqualityRelationship> solutions = solver.solve(goal).stream().filter(r -> r.left instanceof VariableRes).collect(Collectors.toList());
+
+		PrintArgumentCollector printArgumentCollector = new PrintArgumentCollector();
+		goal.accept(printArgumentCollector);
+
+		for (Expression exp : printArgumentCollector.printArguments)
+		{
+			if (solutions.stream().filter(r -> ((VariableRes) r.left).getExpression() == exp).allMatch(r -> ((LiteralInterval) r.right).lowerBound > 0) == false)
+			{
+				System.out.println("The program prints at least one integer that is less than or equal to zero");
+				return;
+			}
+		}
+		System.out.println("The program prints only integers that are greater than zero");
 
 	}
 
@@ -150,6 +161,17 @@ public class NumericalAssertionChecker
 		public void visit(AllocationExpression n, VariableAuxiliaryData argu)
 		{
 			variables.add(new VariableRes(n, argu.statement, argu.callSite));
+		}
+	}
+
+	static class PrintArgumentCollector extends DepthFirstVisitor
+	{
+		List<Expression> printArguments = new ArrayList<>();
+
+		@Override
+		public void visit(PrintStatement n)
+		{
+			printArguments.add(n.f2);
 		}
 	}
 }
