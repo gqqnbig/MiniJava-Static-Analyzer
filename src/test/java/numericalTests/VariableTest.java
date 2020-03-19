@@ -25,7 +25,7 @@ public class VariableTest
 		NumericalAssertionChecker.VariableCollector variableCollector = new NumericalAssertionChecker.VariableCollector();
 		goal.accept(variableCollector, null);
 
-		Assert.assertTrue("res[1@4b952a2d, L14, L6] is missing", variableCollector.variables.stream().anyMatch(v -> v.getStatement().getLine() == 14 && v.getCallSite().getLine() == 6));
+		Assert.assertTrue("res[1@4b952a2d, L17, L6] is missing", variableCollector.variables.stream().anyMatch(v -> v.getStatement().getLine() == 17 && v.getCallSite().getLine() == 6));
 
 	}
 }

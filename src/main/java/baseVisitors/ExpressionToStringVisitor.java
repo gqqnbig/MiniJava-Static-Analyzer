@@ -130,6 +130,11 @@ public class ExpressionToStringVisitor extends GJDepthFirst<String, Object>
 		return n.f0.accept(this, argu) + " + " + n.f2.accept(this, argu);
 	}
 
+	@Override
+	public String visit(MinusExpression n, Object argu)
+	{
+		return n.f0.accept(this, argu) + " - " + n.f2.accept(this, argu);
+	}
 
 	@Override
 	public String visit(TimesExpression n, Object argu)

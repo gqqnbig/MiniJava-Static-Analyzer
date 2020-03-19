@@ -83,6 +83,19 @@ public class VariableRes extends ConstraintVariable<String>
 		this((Node) n, statement, callSite);
 	}
 
+	public VariableRes(IntegerLiteral n, Location statement, Location callSite)
+	{
+		this((Node) n, statement, callSite);
+	}
+
+	public VariableRes(PlusExpression n, Location statement, Location callSite)
+	{
+		this((Node) n, statement, callSite);
+	}
+
+
+
+
 
 	@Override
 	public String getFunctionName()

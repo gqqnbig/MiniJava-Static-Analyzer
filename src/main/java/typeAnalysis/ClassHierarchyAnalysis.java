@@ -46,7 +46,7 @@ public class ClassHierarchyAnalysis
 	 */
 	public static Collection<String> getPossibleTypes(PrimaryExpression receiver, String methodName, int parameterCount)
 	{
-		return methodAvailableInClassMapping.get(new Tuple<>(methodName, parameterCount));
+		return methodAvailableInClassMapping.get(new MethodSignature(methodName, parameterCount));
 	}
 
 	/**

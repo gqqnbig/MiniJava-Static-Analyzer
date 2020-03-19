@@ -9,9 +9,13 @@ class CallSiteTest
 
 class A
 {
+	int f;
+
 	public int id()
 	{
+		int m;
 		System.out.println(1);
-		return 1;
+		m = m + f;
+		return m - 1;
 	}
 }

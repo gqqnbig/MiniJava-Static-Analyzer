@@ -311,6 +311,7 @@ public class ConstraintCollector extends VoidScopeVisitor<Location>
 				if (field.isPresent())
 					receiver = field.get();
 			}
+			//make sure receiver is of type Object.
 			if (receiver != null)
 			{
 				VariableRes vRes = new VariableRes(n, argu);
