@@ -137,7 +137,7 @@ public class NumericalAssertionChecker
 		public void visit(Statement n, VariableAuxiliaryData argu)
 		{
 			argu.statement = new Location(n);
-			for (var nullable : integersInScope)
+			for (IntIdentifierDefinition nullable : integersInScope)
 			{
 				variables.add(new VariableIn(nullable, argu.statement, argu.callSite));
 				variables.add(new VariableOut(nullable, argu.statement, argu.callSite));
