@@ -220,7 +220,8 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 	@Override
 	public void visit(IntegerLiteral n, VariableAuxiliaryData argu)
 	{
-		int value = Integer.parseInt(n.f0.toString());
+		long value;
+		value = Long.parseLong(n.f0.toString());
 		constraints.add(new EqualityRelationship(new VariableRes(n, argu.statement, argu.callSite), new LiteralInterval(value, value), "C12"));
 	}
 
@@ -229,6 +230,16 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 	{
 		constraints.add(new EqualityRelationship(new VariableRes(n, argu.statement, argu.callSite),
 				new PlusInterval(new VariableRes(n.f0, argu.statement, argu.callSite), new VariableRes(n.f2, argu.statement, argu.callSite)),
+				"C13"));
+
+		super.visit(n, argu);
+	}
+
+	@Override
+	public void visit(MinusExpression n, VariableAuxiliaryData argu)
+	{
+		constraints.add(new EqualityRelationship(new VariableRes(n, argu.statement, argu.callSite),
+				new MinusInterval(new VariableRes(n.f0, argu.statement, argu.callSite), new VariableRes(n.f2, argu.statement, argu.callSite)),
 				"C13"));
 
 		super.visit(n, argu);

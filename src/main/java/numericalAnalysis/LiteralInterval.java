@@ -8,12 +8,12 @@ public class LiteralInterval implements Literal<Interval>, Interval
 {
 	public static final LiteralInterval NONE = new LiteralInterval();
 
-	public int lowerBound;
-	public int upperBound;
+	public long lowerBound;//long to store 2147483648, -minInt
+	public long upperBound;
 
-	public LiteralInterval(int lowerBound, int upperBound)
+	public LiteralInterval(long lowerBound, long upperBound)
 	{
-		assert lowerBound <= upperBound;
+		assert lowerBound <= upperBound : String.format("%1$d <= %2$d failed.", lowerBound, upperBound);
 
 		this.lowerBound = lowerBound;
 		this.upperBound = upperBound;

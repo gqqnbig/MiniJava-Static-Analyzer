@@ -1,8 +1,13 @@
 package numericalAnalysis;
 
 import baseVisitors.ExpressionToStringVisitor;
+import math.EqualityRelationship;
+import math.EquationSolver;
+import math.Literal;
 import syntaxtree.*;
 import utils.Location;
+
+import java.util.Collection;
 
 public class VariableRes extends ConstraintVariable<String>
 {
@@ -93,7 +98,10 @@ public class VariableRes extends ConstraintVariable<String>
 		this((Node) n, statement, callSite);
 	}
 
-
+	public VariableRes(MinusExpression n, Location statement, Location callSite)
+	{
+		this((Node) n, statement, callSite);
+	}
 
 
 
@@ -101,6 +109,12 @@ public class VariableRes extends ConstraintVariable<String>
 	public String getFunctionName()
 	{
 		return "res";
+	}
+
+	@Override
+	public <ER extends EqualityRelationship<Interval>> Literal<Interval> reduce(Collection<ER> constraints, EquationSolver<Interval> solver)
+	{
+		return null;
 	}
 
 	public Node getExpression()

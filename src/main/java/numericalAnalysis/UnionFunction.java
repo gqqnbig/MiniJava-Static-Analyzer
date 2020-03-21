@@ -1,5 +1,7 @@
 package numericalAnalysis;
 
+import math.EqualityRelationship;
+import math.EquationSolver;
 import math.FunctionUnion;
 import math.Literal;
 
@@ -33,8 +35,8 @@ public class UnionFunction implements FunctionUnion<Interval>, Interval
 		return inputArray;
 	}
 
-
-	public Literal<Interval> getReturnValue(Collection<EqualityRelationship> constraints, Solver solver)
+	@Override
+	public <ER extends EqualityRelationship<Interval>> Literal<Interval> reduce(Collection<ER> constraints, EquationSolver<Interval> solver)
 	{
 		Literal<Interval> result = null;
 		for (Interval element : inputArray)

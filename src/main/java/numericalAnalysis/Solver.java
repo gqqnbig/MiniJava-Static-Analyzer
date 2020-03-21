@@ -2,6 +2,7 @@ package numericalAnalysis;
 
 import math.EquationSolver;
 import math.Literal;
+import math.Variable;
 import syntaxtree.Goal;
 import utils.FlowSensitiveVariable;
 import utils.Options;
@@ -59,17 +60,8 @@ public class Solver extends EquationSolver<Interval>
 				if (r.right instanceof Literal)
 					continue;
 
-				Literal<Interval> rightL = null;
-				if (r.right instanceof ConstraintVariable)
-					rightL = ((ConstraintVariable) r.right).getReturnValue(constraints, this);
-				else if (r.right instanceof UnionFunction)
-					rightL = ((UnionFunction) r.right).getReturnValue(constraints, this);
-
-				Literal<Interval> leftL = null;
-				if (r.left instanceof ConstraintVariable)
-					leftL = ((ConstraintVariable) r.left).getReturnValue(constraints, this);
-				else if (r.left instanceof UnionFunction)
-					leftL = ((UnionFunction) r.left).getReturnValue(constraints, this);
+				Literal<Interval> rightL = getReturnValue(constraints, r.right);
+				Literal<Interval> leftL = getReturnValue(constraints, r.left);
 
 				if (leftL == null && rightL != null)
 				{
@@ -115,6 +107,14 @@ public class Solver extends EquationSolver<Interval>
 
 		return solutions;
 
+	}
+
+	private Literal<Interval> getReturnValue(List<EqualityRelationship> constraints, Interval interval)
+	{
+		if(interval instanceof Variable)
+			 return ((Variable) interval).reduce(constraints,this);
+		else
+			return null;
 	}
 
 	@Override
