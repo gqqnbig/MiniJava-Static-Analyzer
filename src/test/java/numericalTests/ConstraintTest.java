@@ -31,6 +31,24 @@ public class ConstraintTest
 			Assert.fail("The right hand side of C11 should not have null, but we find " + c11.get().toString());
 
 		Assert.assertTrue("C12 res[1, n, cs] = [1, 1] is missing.", constraintCollector.constraints.stream().anyMatch(r -> "C12".equals(r.comment) && ((LiteralInterval) r.right).lowerBound == 1 && ((LiteralInterval) r.right).upperBound == 1));
+	}
+
+	@Test
+	public void testC1() throws FileNotFoundException, ParseException
+	{
+		FileInputStream stream = new FileInputStream("testcases/hw3/SingleUseFieldTest.java");
+		try {MiniJavaParser.ReInit(stream);} catch (Throwable e) {new MiniJavaParser(stream);}
+		Goal goal = MiniJavaParser.Goal();
+
+		ProgramStructureCollector.init(goal);
+		ClassHierarchyAnalysis.init(goal);
+		//Initialize AllocationVisitor.usedClasses so that we can skip analyzing ununsed classes.
+		goal.accept(new AllocationVisitor());
+
+		ConstraintCollector constraintCollector = new ConstraintCollector();
+		goal.accept(constraintCollector, null);
+
+		Assert.assertTrue("in[A.f, L15, L5] is missing.", constraintCollector.constraints.stream().anyMatch(r -> "C1".equals(r.comment) && r.left instanceof VariableIn && ((VariableIn) r.left).getStatement().getLine() == 15));
 
 	}
 }

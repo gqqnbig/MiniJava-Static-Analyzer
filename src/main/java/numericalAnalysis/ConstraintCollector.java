@@ -41,15 +41,24 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 		n.f4.accept(p);
 
 		Set<Location> callSites = ProgramStructureCollector.getCallsites(getClassName(), getMethodName(), p.parameters.size());
+		Location returnStatement = new Location(n.f9);
 		for (Location callSite : callSites)
 		{
 
 			isFirstStatement = true;
 			n.f8.accept(this, new VariableAuxiliaryData(null, callSite));
-			isFirstStatement = false;
 
 			//return expression
-			visit(n.f10, new VariableAuxiliaryData(new Location(n.f9), callSite));
+			if (isFirstStatement)
+			{
+				for (IntIdentifierDefinition x : fieldsInScope)
+				{
+					VariableIn vIn = new VariableIn(x, returnStatement, callSite);
+					constraints.add(new EqualityRelationship(vIn, new LiteralInterval(Integer.MIN_VALUE, Integer.MAX_VALUE), "C1"));
+				}
+			}
+			visit(n.f10, new VariableAuxiliaryData(returnStatement, callSite));
+			isFirstStatement = false;
 		}
 
 	}
