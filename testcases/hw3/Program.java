@@ -17,15 +17,15 @@ class Program
 		int n;
 		int[] arr;
 
-		{{{n = 2;while (n > -2) {System.out.println(n);n = n + 1;}}}}
+		{{{n = 2;while ((0 - 2) < n){System.out.println(n);	n = n + 1;}}}}
 
-		System.out.println(new ArrayTest().init().get()); //should be 1
+		System.out.println(((new ArrayTest()).init()).get()); //should be 1
 
 		arr = new int[0];
 		System.out.println(arr.length); //should be 1
 
 
-		System.out.println(((((-2147483648)))) - 1); //should be +
+		System.out.println(((((0 - 2147483648)))) - 1); //should be +
 	}
 }
 
@@ -36,7 +36,7 @@ class ArrayTest
 	public ArrayTest init()
 	{
 		arr = new int[2];
-		arr[1] = arr[0] + 1; //arr[0] is 0.
+		arr[1] = (arr[0]) + 1; //arr[0] is 0.
 		return this;
 	}
 
