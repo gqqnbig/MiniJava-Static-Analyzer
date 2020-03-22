@@ -110,12 +110,16 @@ public class NumericalAssertionChecker
 		@Override
 		public void visitScope(MethodDeclaration n, VariableAuxiliaryData argu)
 		{
-			integersInScope = ProgramStructureCollector.getIntegerIdentifiersInScope(new Scope(getClassName(), getMethodName()));
-
 			ParameterCollector p = new ParameterCollector();
 			n.f4.accept(p);
 
 			Set<Location> callSites = ProgramStructureCollector.getCallsites(getClassName(), getMethodName(), p.parameters.size());
+			if (callSites == null)
+				return;
+
+			integersInScope = ProgramStructureCollector.getIntegerIdentifiersInScope(new Scope(getClassName(), getMethodName()));
+
+
 			for (Location callSite : callSites)
 			{
 				VariableAuxiliaryData d = new VariableAuxiliaryData(null, callSite);

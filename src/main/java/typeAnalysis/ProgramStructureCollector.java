@@ -30,9 +30,9 @@ public class ProgramStructureCollector extends ScopeVisitor<Object>
 {
 	public static HashMap<String, HashSet<MethodSignature>> classMethodMapping;
 
-	/*
+	/**
 	map from subclass to its superclass
-	 */
+	 **/
 	public static HashMap<String, String> superClassHierarchy;
 
 	public static void init()

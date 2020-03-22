@@ -1,14 +1,11 @@
 package typeAnalysis;
 
 import syntaxtree.Goal;
-import syntaxtree.Identifier;
 import syntaxtree.PrimaryExpression;
-import utils.Tuple;
+import syntaxtree.ThisExpression;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClassHierarchyAnalysis
 {
@@ -42,23 +39,43 @@ public class ClassHierarchyAnalysis
 	 * Get possible types of an identifier.
 	 *
 	 * @param
+	 * @param className
 	 * @return
 	 */
-	public static Collection<String> getPossibleTypes(PrimaryExpression receiver, String methodName, int parameterCount)
+	public static Collection<String> getPossibleTypes(PrimaryExpression receiver, String className, String methodName, int parameterCount)
 	{
-		return methodAvailableInClassMapping.get(new MethodSignature(methodName, parameterCount));
+		if (receiver.f0.choice instanceof ThisExpression)
+		{
+			//Type of `this` is this class and its derivations.
+			Collection<String> data2 = new ArrayList<>();
+			data2.add(className);
+
+			Queue<String> classes = new LinkedList<>();
+			classes.add(className);
+
+			while (classes.size() > 0)
+			{
+				String c = classes.poll();
+				Collection<String> types = superClassHierarchy.entrySet().stream().filter(s -> s.getValue().equals(c)).map(Map.Entry::getKey).collect(Collectors.toList());
+				data2.addAll(types);
+				classes.addAll(types);
+			}
+			return data2;
+		}
+		else
+			return methodAvailableInClassMapping.get(new MethodSignature(methodName, parameterCount));
 	}
 
-	/**
-	 * Get possible types of an identifier.
-	 *
-	 * @param
-	 * @return
-	 */
-	public static Collection<String> getPossibleTypes(Identifier receiver, String methodName, int parameterCount)
-	{
-		return methodAvailableInClassMapping.get(new Tuple<>(methodName, parameterCount));
-	}
+//	/**
+//	 * Get possible types of an identifier.
+//	 *
+//	 * @param
+//	 * @return
+//	 */
+//	public static Collection<String> getPossibleTypes(Identifier receiver, String methodName, int parameterCount)
+//	{
+//		return methodAvailableInClassMapping.get(new Tuple<>(methodName, parameterCount));
+//	}
 
 	static HashMap<MethodSignature, HashSet<String>> c2mTOm2c(HashMap<String, HashSet<MethodSignature>> c2m)
 	{
