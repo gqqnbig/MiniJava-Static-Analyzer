@@ -103,6 +103,10 @@ public class VariableRes extends ConstraintVariable<String>
 		this((Node) n, statement, callSite);
 	}
 
+	public VariableRes(TimesExpression n, Location statement, Location callSite)
+	{
+		this((Node) n, statement, callSite);
+	}
 
 
 	@Override
