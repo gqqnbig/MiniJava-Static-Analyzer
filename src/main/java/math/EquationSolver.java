@@ -7,7 +7,7 @@ public abstract class EquationSolver<T extends Domain>
 {
 	protected abstract Literal<T> union(Literal<T> a, Literal<T> b);
 
-	protected <ER extends EqualityRelationship<T>> void clearUpSingleUnion(Collection<ER> constraints)
+	public <ER extends EqualityRelationship<T>> void clearUpSingleUnion(Collection<ER> constraints)
 	{
 		for (ER r : constraints)
 		{
