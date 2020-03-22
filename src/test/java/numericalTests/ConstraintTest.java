@@ -86,8 +86,6 @@ public class ConstraintTest
 		//Initialize AllocationVisitor.usedClasses so that we can skip analyzing ununsed classes.
 		goal.accept(new AllocationVisitor());
 
-		Solver solver = new Solver();
-		solver.debugOut = new PrintStream(OutputStream.nullOutputStream());
 
 		WrittenFieldsCollector writtenFieldsCollector = new WrittenFieldsCollector();
 		writtenFieldsCollector.visit(goal, null);
@@ -95,6 +93,8 @@ public class ConstraintTest
 		ConstraintCollector constraintCollector = new ConstraintCollector(writtenFieldsCollector.writtenFields);
 		goal.accept(constraintCollector, null);
 
+		Solver solver = new Solver();
+		solver.clearUpSingleUnion(constraintCollector.constraints);
 		Assert.assertTrue("res[new A().id(), L5C17, unknown] = res[f - 1, L15C17, L5C44] is missing.",
 				constraintCollector.constraints.stream().anyMatch(r -> {
 					if ("C11".equals(r.comment) && r.left instanceof VariableRes && r.right instanceof VariableRes)

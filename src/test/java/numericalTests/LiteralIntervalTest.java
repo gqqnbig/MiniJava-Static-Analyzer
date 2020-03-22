@@ -110,7 +110,7 @@ public class LiteralIntervalTest
 
 
 	@Test
-	public void test() throws FileNotFoundException, ParseException
+	public void testPair3() throws FileNotFoundException, ParseException
 	{
 		FileInputStream stream = new FileInputStream("testcases/hw3/Pair3.java");
 		try {MiniJavaParser.ReInit(stream);} catch (Throwable e) {new MiniJavaParser(stream);}

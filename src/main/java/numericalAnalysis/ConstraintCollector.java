@@ -213,9 +213,10 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 		n.f4.accept(c);
 		String methodName = n.f2.f0.toString();
 		Collection<String> types = ClassHierarchyAnalysis.getPossibleTypes(n.f0, getClassName(), methodName, c.arguments.size());
+		Location callSite = new Location(n.f2);
 		for (String type : types)
 		{
-			u.getInput().add(new VariableRes(ProgramStructureCollector.getReturnExpression(type, methodName), ProgramStructureCollector.getLastStatement(type, methodName), argu.statement));
+			u.getInput().add(new VariableRes(ProgramStructureCollector.getReturnExpression(type, methodName), ProgramStructureCollector.getLastStatement(type, methodName), callSite));
 		}
 		constraints.add(new EqualityRelationship(new VariableRes(n, argu.statement, argu.callSite), u, "C11"));
 
@@ -224,7 +225,7 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 		{
 			for (int i = 0; i < c.arguments.size(); i++)
 			{
-				VariableIn vIn = new VariableIn(ProgramStructureCollector.getParameter(type, methodName, i), ProgramStructureCollector.getFirstStatement(type, methodName), argu.statement);
+				VariableIn vIn = new VariableIn(ProgramStructureCollector.getParameter(type, methodName, i), ProgramStructureCollector.getFirstStatement(type, methodName), callSite);
 				constraints.add(new EqualityRelationship(new VariableRes(c.arguments.get(i), argu.statement, argu.callSite), vIn, "C7"));
 			}
 		}

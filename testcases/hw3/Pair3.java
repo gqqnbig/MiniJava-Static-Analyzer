@@ -5,7 +5,6 @@
  
 class Main {
     public static void main(String[] a){
-        System.out.println(new A().id());
         System.out.println(new A().A());
     }
 }
@@ -13,9 +12,7 @@ class Main {
 class A {
     int a;
     int b;
-    public int id(){
-        return 1;
-    }
+
     public int A(){
         int c;
         int d;

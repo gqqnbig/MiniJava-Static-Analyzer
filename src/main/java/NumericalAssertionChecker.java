@@ -49,17 +49,17 @@ public class NumericalAssertionChecker
 		//Initialize AllocationVisitor.usedClasses so that we can skip analyzing ununsed classes.
 		goal.accept(new AllocationVisitor());
 
-		if (Options.isDebug)
-		{
-			VariableCollector variableCollector = new VariableCollector();
-			goal.accept(variableCollector, null);
-
-			debugOut.println("\nVariables:");
-			for (FlowSensitiveVariable variable : variableCollector.variables)
-			{
-				debugOut.println(variable);
-			}
-		}
+//		if (Options.isDebug)
+//		{
+//			VariableCollector variableCollector = new VariableCollector();
+//			goal.accept(variableCollector, null);
+//
+//			debugOut.println("\nVariables:");
+//			for (FlowSensitiveVariable variable : variableCollector.variables)
+//			{
+//				debugOut.println(variable);
+//			}
+//		}
 		WrittenFieldsCollector writtenFieldsCollector = new WrittenFieldsCollector();
 		writtenFieldsCollector.visit(goal, null);
 
