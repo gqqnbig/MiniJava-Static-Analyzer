@@ -19,6 +19,14 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 	List<IntIdentifierDefinition> fieldsInScope;
 	public List<EqualityRelationship> constraints = new ArrayList<>();
 
+
+	final HashSet<IntIdentifierDefinition> writtenFields;
+
+	public ConstraintCollector(HashSet<IntIdentifierDefinition> writtenFields)
+	{
+		this.writtenFields = writtenFields;
+	}
+
 	@Override
 	public void visitScope(MainClass n, VariableAuxiliaryData argu)
 	{
@@ -54,7 +62,10 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 				for (IntIdentifierDefinition x : fieldsInScope)
 				{
 					VariableIn vIn = new VariableIn(x, returnStatement, callSite);
-					constraints.add(new EqualityRelationship(vIn, new LiteralInterval(Integer.MIN_VALUE, Integer.MAX_VALUE), "C1"));
+					if (writtenFields.contains(x))
+						constraints.add(new EqualityRelationship(vIn, new LiteralInterval(Integer.MIN_VALUE, Integer.MAX_VALUE), "C1"));
+					else
+						constraints.add(new EqualityRelationship(vIn, new LiteralInterval(0, 0)));
 				}
 			}
 			visit(n.f10, new VariableAuxiliaryData(returnStatement, callSite));

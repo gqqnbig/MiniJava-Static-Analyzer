@@ -3,7 +3,6 @@ import numericalAnalysis.*;
 import org.junit.Assert;
 import org.junit.Test;
 import syntaxtree.Goal;
-import syntaxtree.IntegerLiteral;
 import typeAnalysis.ClassHierarchyAnalysis;
 
 import java.io.FileInputStream;
@@ -25,7 +24,9 @@ public class ConstraintTest
 		//Initialize AllocationVisitor.usedClasses so that we can skip analyzing ununsed classes.
 		goal.accept(new AllocationVisitor());
 
-		ConstraintCollector constraintCollector = new ConstraintCollector();
+		WrittenFieldsCollector writtenFieldsCollector = new WrittenFieldsCollector();
+		writtenFieldsCollector.visit(goal, null);
+		ConstraintCollector constraintCollector = new ConstraintCollector(writtenFieldsCollector.writtenFields);
 		goal.accept(constraintCollector, null);
 
 		var c11 = constraintCollector.constraints.stream().filter(r -> "C11".equals(r.comment) && ((UnionFunction) r.right).getInput().stream().anyMatch(res -> ((VariableRes) res).getInput().startsWith("null@"))).findFirst();
@@ -47,15 +48,31 @@ public class ConstraintTest
 		//Initialize AllocationVisitor.usedClasses so that we can skip analyzing ununsed classes.
 		goal.accept(new AllocationVisitor());
 
-		ConstraintCollector constraintCollector = new ConstraintCollector();
+		WrittenFieldsCollector writtenFieldsCollector = new WrittenFieldsCollector();
+		writtenFieldsCollector.visit(goal, null);
+		ConstraintCollector constraintCollector = new ConstraintCollector(writtenFieldsCollector.writtenFields);
 		goal.accept(constraintCollector, null);
 
-		Assert.assertTrue("in[A.f, L15, L5] is missing.", constraintCollector.constraints.stream().anyMatch(r -> "C1".equals(r.comment) && r.left instanceof VariableIn && ((VariableIn) r.left).getStatement().getLine() == 15));
+		Assert.assertTrue("in[A.f, L15, L5] is missing.", constraintCollector.constraints.stream().anyMatch(r -> {
+			if (r.left instanceof VariableIn)
+			{
+				VariableIn vIn = (VariableIn) r.left;
+				return vIn.getStatement().getLine() == 15 && vIn.getInput().getIdentifier().equals("f");
+			}
+			else
+				return false;
+		}));
 
 		Solver solver = new Solver();
 		solver.debugOut = new PrintStream(OutputStream.nullOutputStream());
-		var solutions = solver.solve(goal);
+		var solutions = solver.solve(goal, constraintCollector.constraints);
 
 		Assert.assertTrue("Solution of res[f, L15, L5] is missing", solutions.stream().anyMatch(r -> r.left instanceof VariableRes && ((VariableRes) r.left).getInput().startsWith("f@")));
+
+		Assert.assertTrue("res[new A().id(), ? , ?] = [-1, -1] is missing", solutions.stream().anyMatch(r -> r.left instanceof VariableRes &&
+				((VariableRes) r.left).getInput().startsWith("new A().id()@") &&
+				((LiteralInterval) r.right).lowerBound == -1 && ((LiteralInterval) r.right).upperBound == -1));
+
+
 	}
 }

@@ -1,6 +1,8 @@
 import baseVisitors.AllocationVisitor;
+import numericalAnalysis.ConstraintCollector;
 import numericalAnalysis.ProgramStructureCollector;
 import numericalAnalysis.Solver;
+import numericalAnalysis.WrittenFieldsCollector;
 import org.junit.Test;
 import syntaxtree.Goal;
 import typeAnalysis.ClassHierarchyAnalysis;
@@ -26,6 +28,12 @@ public class SolverTerminationTest
 
 		Solver solver = new Solver();
 		solver.debugOut = new PrintStream(OutputStream.nullOutputStream());
-		solver.solve(goal);
+
+		WrittenFieldsCollector writtenFieldsCollector = new WrittenFieldsCollector();
+		writtenFieldsCollector.visit(goal, null);
+
+		ConstraintCollector constraintCollector = new ConstraintCollector(writtenFieldsCollector.writtenFields);
+		goal.accept(constraintCollector, null);
+		solver.solve(goal, constraintCollector.constraints);
 	}
 }

@@ -14,18 +14,12 @@ public class Solver extends EquationSolver<Interval>
 {
 	public PrintStream debugOut;
 
-	public List<EqualityRelationship> solve(Goal goal)
+
+
+
+	public List<EqualityRelationship> solve(Goal goal, List<EqualityRelationship> constraints)
 	{
-		ConstraintCollector constraintCollector = new ConstraintCollector();
-		goal.accept(constraintCollector, null);
-		debugOut.println("\nConstraints:");
-		for (EqualityRelationship r : constraintCollector.constraints)
-		{
-			debugOut.println(r);
-		}
-
-
-		List<EqualityRelationship> solutions = solve(constraintCollector.constraints);
+		List<EqualityRelationship> solutions = solve(constraints);
 		debugOut.println("\nSolutions:");
 		for (EqualityRelationship r : solutions)
 		{

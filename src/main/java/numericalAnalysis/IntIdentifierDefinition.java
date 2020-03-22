@@ -3,6 +3,8 @@ package numericalAnalysis;
 import syntaxtree.Identifier;
 import utils.Options;
 
+import java.util.Objects;
+
 public class IntIdentifierDefinition
 {
 	private final String identifier;
@@ -70,5 +72,22 @@ public class IntIdentifierDefinition
 		}
 	}
 
+	@Override
+	public boolean equals(Object o)
+	{
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		IntIdentifierDefinition that = (IntIdentifierDefinition) o;
+		return parameterIndex == that.parameterIndex &&
+				identifier.equals(that.identifier) &&
+				Class.equals(that.Class) &&
+				Objects.equals(Method, that.Method);
+	}
+
+	@Override
+	public int hashCode()
+	{
+		return Objects.hash(identifier, Class, Method, parameterIndex);
+	}
 }
 

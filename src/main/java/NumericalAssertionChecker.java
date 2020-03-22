@@ -60,17 +60,28 @@ public class NumericalAssertionChecker
 				debugOut.println(variable);
 			}
 		}
+		WrittenFieldsCollector writtenFieldsCollector = new WrittenFieldsCollector();
+		writtenFieldsCollector.visit(goal, null);
+
+		ConstraintCollector constraintCollector = new ConstraintCollector(writtenFieldsCollector.writtenFields);
+		goal.accept(constraintCollector, null);
+		debugOut.println("\nConstraints:");
+		for (EqualityRelationship r : constraintCollector.constraints)
+		{
+			debugOut.println(r);
+		}
 
 		Solver solver = new Solver();
 		solver.debugOut = debugOut;
-		List<EqualityRelationship> solutions = solver.solve(goal).stream().filter(r -> r.left instanceof VariableRes).collect(Collectors.toList());
+		List<EqualityRelationship> solutions = solver.solve(goal, constraintCollector.constraints).stream().filter(r -> r.left instanceof VariableRes).collect(Collectors.toList());
 
 		PrintArgumentCollector printArgumentCollector = new PrintArgumentCollector();
 		goal.accept(printArgumentCollector);
 
 		for (Expression exp : printArgumentCollector.printArguments)
 		{
-			if (solutions.stream().filter(r -> ((VariableRes) r.left).getExpression() == exp).allMatch(r -> ((LiteralInterval) r.right).lowerBound > 0) == false)
+			Node node = VariableRes.diveInto(exp);
+			if (solutions.stream().filter(r -> ((VariableRes) r.left).getExpression() == node).allMatch(r -> ((LiteralInterval) r.right).lowerBound > 0) == false)
 			{
 				System.out.println("The program prints at least one integer that is less than or equal to zero");
 				return;

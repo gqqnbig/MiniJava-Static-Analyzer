@@ -10,6 +10,11 @@ import java.util.Collection;
 
 public class MinusInterval implements Variable<Tuple<Interval, Interval>, Interval>, Interval
 {
+	public static Literal<Interval> minus(LiteralInterval a, LiteralInterval b)
+	{
+		return new LiteralInterval(a.lowerBound - b.upperBound, a.upperBound - b.lowerBound);
+	}
+
 	private final Tuple<Interval, Interval> input;
 	public Interval x;
 	public Interval y;
@@ -44,7 +49,7 @@ public class MinusInterval implements Variable<Tuple<Interval, Interval>, Interv
 		if (ly == null)
 			return null;
 
-		return new LiteralInterval((int)(lx.lowerBound - ly.upperBound), (int)(lx.upperBound - ly.lowerBound));
+		return minus(lx, ly);
 	}
 
 	@Override
