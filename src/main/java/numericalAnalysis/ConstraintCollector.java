@@ -6,7 +6,6 @@ import baseVisitors.VoidScopeVisitor;
 import syntaxtree.*;
 import typeAnalysis.ClassHierarchyAnalysis;
 import utils.Location;
-import utils.ObjectIdentifierDefinition;
 import utils.Scope;
 
 import java.util.*;
@@ -42,13 +41,16 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 	@Override
 	public void visitScope(MethodDeclaration n, VariableAuxiliaryData argu)
 	{
+		ParameterCollector p = new ParameterCollector();
+		p.visit(n.f4);
+		Set<Location> callSites = ProgramStructureCollector.getCallsites(getClassName(), getMethodName(), p.parameters.size());
+		if (callSites == null)
+			return; //It's an unused method.
+
 		variablesInScope = ProgramStructureCollector.getVariableIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 		fieldsInScope = ProgramStructureCollector.getFieldIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 
-		ParameterCollector p = new ParameterCollector();
-		n.f4.accept(p);
 
-		Set<Location> callSites = ProgramStructureCollector.getCallsites(getClassName(), getMethodName(), p.parameters.size());
 		Location returnStatement = new Location(n.f9);
 		for (Location callSite : callSites)
 		{
@@ -152,7 +154,7 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 			ArgumentsCollector c = new ArgumentsCollector();
 			ms.f4.accept(c);
 			String methodName = ms.f2.f0.toString();
-			Collection<String> types = ClassHierarchyAnalysis.getPossibleTypes(ms.f0, methodName, c.arguments.size());
+			Collection<String> types = ClassHierarchyAnalysis.getPossibleTypes(ms.f0, getClassName(), methodName, c.arguments.size());
 
 			Stream.concat(fieldsInScope.stream(), variablesInScope.stream()).filter(g -> !g.equals(assignee)).forEach(g ->
 			{
@@ -219,7 +221,7 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 		ArgumentsCollector c = new ArgumentsCollector();
 		n.f4.accept(c);
 		String methodName = n.f2.f0.toString();
-		Collection<String> types = ClassHierarchyAnalysis.getPossibleTypes(n.f0, methodName, c.arguments.size());
+		Collection<String> types = ClassHierarchyAnalysis.getPossibleTypes(n.f0, getClassName(), methodName, c.arguments.size());
 		for (String type : types)
 		{
 			u.getInput().add(new VariableRes(ProgramStructureCollector.getReturnExpression(type, methodName), ProgramStructureCollector.getLastStatement(type, methodName), argu.statement));
@@ -260,6 +262,16 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 	{
 		constraints.add(new EqualityRelationship(new VariableRes(n, argu.statement, argu.callSite),
 				new MinusInterval(new VariableRes(n.f0, argu.statement, argu.callSite), new VariableRes(n.f2, argu.statement, argu.callSite)),
+				"C13"));
+
+		super.visit(n, argu);
+	}
+
+	@Override
+	public void visit(TimesExpression n, VariableAuxiliaryData argu)
+	{
+		constraints.add(new EqualityRelationship(new VariableRes(n, argu.statement, argu.callSite),
+				new MultiplyInterval(new VariableRes(n.f0, argu.statement, argu.callSite), new VariableRes(n.f2, argu.statement, argu.callSite)),
 				"C13"));
 
 		super.visit(n, argu);

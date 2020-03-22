@@ -258,16 +258,10 @@ public class ProgramStructureCollector extends typeAnalysis.ProgramStructureColl
 		Location returnStatement = new Location(n.f9);
 		statementOrderData.get(key).add(new JumpInfo(returnStatement));
 		returnExpressions.put(key, n.f10);
-//		Tuple key = new Tuple();
-//		key.item1 = getClassName();
-//		key.item2 = getMethodName();
-//		lastStatementData.put(key, lastStatement);
-//
-//		if (firstStatement == null)
-//			firstStatement = lastStatement;
-//		firstStatementData.put(key, firstStatement);
-//
-//		lastStatement = null;
+
+		//return statements may have message sends.
+		visit(n.f10);
+
 		return null;
 	}
 
