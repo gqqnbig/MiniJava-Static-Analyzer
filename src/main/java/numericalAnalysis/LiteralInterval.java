@@ -41,6 +41,12 @@ public class LiteralInterval implements Literal<Interval>, Interval
 	public long lowerBound;//long to store 2147483648, -minInt
 	public long upperBound;
 
+
+	public LiteralInterval(long value)
+	{
+		this(value, value);
+	}
+
 	public LiteralInterval(long lowerBound, long upperBound)
 	{
 		assert lowerBound <= upperBound : String.format("%1$d <= %2$d failed.", lowerBound, upperBound);
@@ -53,7 +59,6 @@ public class LiteralInterval implements Literal<Interval>, Interval
 			this.lowerBound = Integer.MIN_VALUE;
 			this.upperBound = Integer.MAX_VALUE;
 		}
-
 	}
 
 	/**

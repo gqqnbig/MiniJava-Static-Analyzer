@@ -18,7 +18,7 @@ public class MultiplyInterval implements Variable<Tuple<Interval, Interval>, Int
 		else if (a.isIn(0) || b.isIn(0))
 			return new LiteralInterval(Math.min(a.lowerBound * b.upperBound, a.upperBound * b.lowerBound), Math.max(a.lowerBound * b.lowerBound, a.upperBound * b.upperBound));
 		else
-			return new LiteralInterval(a.upperBound * b.upperBound, a.lowerBound * a.lowerBound);
+			return new LiteralInterval(a.upperBound * b.upperBound, a.lowerBound * b.lowerBound);
 	}
 
 	private final Tuple<Interval, Interval> input;
