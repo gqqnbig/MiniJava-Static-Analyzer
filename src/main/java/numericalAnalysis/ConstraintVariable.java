@@ -1,5 +1,6 @@
 package numericalAnalysis;
 
+import math.EquationSolver;
 import math.Literal;
 import utils.ContextSensitiveVariable;
 import utils.FlowSensitiveVariable;
@@ -52,11 +53,11 @@ public abstract class ConstraintVariable<TInput> implements FlowSensitiveVariabl
 		return input;
 	}
 
-	public Literal<Interval> getReturnValue(Collection<EqualityRelationship> constraints, Solver solver)
+	@Override
+	public <ER extends math.EqualityRelationship<Interval>> Literal<Interval> reduce(Collection<ER> constraints, EquationSolver<Interval> solver)
 	{
 		return solver.findLiteral(this, constraints);
 	}
-
 
 	@Override
 	public String toString()

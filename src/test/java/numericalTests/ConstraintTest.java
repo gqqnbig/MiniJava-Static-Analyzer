@@ -8,6 +8,8 @@ import typeAnalysis.ClassHierarchyAnalysis;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 public class ConstraintTest
 {
@@ -50,5 +52,10 @@ public class ConstraintTest
 
 		Assert.assertTrue("in[A.f, L15, L5] is missing.", constraintCollector.constraints.stream().anyMatch(r -> "C1".equals(r.comment) && r.left instanceof VariableIn && ((VariableIn) r.left).getStatement().getLine() == 15));
 
+		Solver solver = new Solver();
+		solver.debugOut = new PrintStream(OutputStream.nullOutputStream());
+		var solutions = solver.solve(goal);
+
+		Assert.assertTrue("Solution of res[f, L15, L5] is missing", solutions.stream().anyMatch(r -> r.left instanceof VariableRes && ((VariableRes) r.left).getInput().startsWith("f@")));
 	}
 }

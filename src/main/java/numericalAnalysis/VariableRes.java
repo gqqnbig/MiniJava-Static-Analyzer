@@ -111,12 +111,6 @@ public class VariableRes extends ConstraintVariable<String>
 		return "res";
 	}
 
-	@Override
-	public <ER extends EqualityRelationship<Interval>> Literal<Interval> reduce(Collection<ER> constraints, EquationSolver<Interval> solver)
-	{
-		return null;
-	}
-
 	public Node getExpression()
 	{
 		return expression;

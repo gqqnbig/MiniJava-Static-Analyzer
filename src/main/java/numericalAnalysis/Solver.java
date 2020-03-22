@@ -54,9 +54,8 @@ public class Solver extends EquationSolver<Interval>
 			hasChange = false;
 
 			constraints = new ArrayList<>(workingset);
-			for (int i = 0; i < constraints.size(); i++)
+			for (EqualityRelationship r : constraints)
 			{
-				EqualityRelationship r = constraints.get(i);
 				if (r.right instanceof Literal)
 					continue;
 
@@ -111,8 +110,8 @@ public class Solver extends EquationSolver<Interval>
 
 	private Literal<Interval> getReturnValue(List<EqualityRelationship> constraints, Interval interval)
 	{
-		if(interval instanceof Variable)
-			 return ((Variable) interval).reduce(constraints,this);
+		if (interval instanceof Variable)
+			return ((Variable) interval).reduce(constraints, this);
 		else
 			return null;
 	}

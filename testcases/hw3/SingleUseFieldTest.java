@@ -12,6 +12,6 @@ class A
 
 	public int id()
 	{
-		return f;
+		return f - 1;
 	}
 }

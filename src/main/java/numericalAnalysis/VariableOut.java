@@ -21,12 +21,4 @@ public class VariableOut extends ConstraintVariable<IntIdentifierDefinition>
 	{
 		return "out";
 	}
-
-
-	@Override
-	public <ER extends EqualityRelationship<Interval>> Literal<Interval> reduce(Collection<ER> constraints, EquationSolver<Interval> solver)
-	{
-		return null;
-	}
-
 }

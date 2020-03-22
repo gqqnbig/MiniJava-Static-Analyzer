@@ -24,9 +24,4 @@ public class VariableIn extends ConstraintVariable<IntIdentifierDefinition>
 	}
 
 
-	@Override
-	public <ER extends EqualityRelationship<Interval>> Literal<Interval> reduce(Collection<ER> constraints, EquationSolver<Interval> solver)
-	{
-		return null;
-	}
 }
