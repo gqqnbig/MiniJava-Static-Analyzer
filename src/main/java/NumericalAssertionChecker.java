@@ -120,10 +120,12 @@ public class NumericalAssertionChecker
 			integersInScope = ProgramStructureCollector.getIntegerIdentifiersInScope(new Scope(getClassName(), getMethodName()));
 
 
+			Location returnStatement = new Location(n.f9);
 			for (Location callSite : callSites)
 			{
 				VariableAuxiliaryData d = new VariableAuxiliaryData(null, callSite);
 				n.f8.accept(this, d);
+				visit(n.f10, new VariableAuxiliaryData(returnStatement, callSite));
 			}
 		}
 

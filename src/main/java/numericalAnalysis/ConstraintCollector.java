@@ -167,15 +167,6 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 				if (u.getInput().size() > 0)
 					constraints.add(new EqualityRelationship(new VariableOut(g, argu.statement, argu.callSite), u, "C6"));
 			});
-
-			for (String type : types)
-			{
-				for (int i = 0; i < c.arguments.size(); i++)
-				{
-					VariableIn vIn = new VariableIn(ProgramStructureCollector.getParameter(type, methodName, i), ProgramStructureCollector.getFirstStatement(type, methodName), argu.statement);
-					constraints.add(new EqualityRelationship(new VariableRes(c.arguments.get(i), argu.statement, argu.callSite), vIn, "C7"));
-				}
-			}
 		}
 		else
 		{
@@ -227,6 +218,16 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 			u.getInput().add(new VariableRes(ProgramStructureCollector.getReturnExpression(type, methodName), ProgramStructureCollector.getLastStatement(type, methodName), argu.statement));
 		}
 		constraints.add(new EqualityRelationship(new VariableRes(n, argu.statement, argu.callSite), u, "C11"));
+
+
+		for (String type : types)
+		{
+			for (int i = 0; i < c.arguments.size(); i++)
+			{
+				VariableIn vIn = new VariableIn(ProgramStructureCollector.getParameter(type, methodName, i), ProgramStructureCollector.getFirstStatement(type, methodName), argu.statement);
+				constraints.add(new EqualityRelationship(new VariableRes(c.arguments.get(i), argu.statement, argu.callSite), vIn, "C7"));
+			}
+		}
 
 		super.visit(n, argu);
 	}

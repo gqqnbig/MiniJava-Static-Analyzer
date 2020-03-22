@@ -72,7 +72,8 @@ public abstract class ConstraintVariable<TInput> implements FlowSensitiveVariabl
 		if (o == null || getClass() != o.getClass()) return false;
 		ConstraintVariable that = (ConstraintVariable) o;
 		return statement.equals(that.statement) &&
-				input.equals(that.input);
+				input.equals(that.input) &&
+				callSite.equals(that.callSite);
 	}
 
 	@Override

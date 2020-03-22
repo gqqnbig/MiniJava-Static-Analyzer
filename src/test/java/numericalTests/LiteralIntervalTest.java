@@ -34,6 +34,10 @@ public class LiteralIntervalTest
 		LiteralInterval i = (LiteralInterval) MultiplyInterval.multiply(new LiteralInterval(0, 0), new LiteralInterval(2, 2));
 		Assert.assertEquals(0, i.lowerBound);
 		Assert.assertEquals(0, i.upperBound);
+
+		i = (LiteralInterval) MultiplyInterval.multiply(new LiteralInterval(5, 5), new LiteralInterval(2, 2));
+		Assert.assertEquals(10, i.lowerBound);
+		Assert.assertEquals(10, i.upperBound);
 	}
 
 	@Test
@@ -94,6 +98,20 @@ public class LiteralIntervalTest
 		ConstraintCollector constraintCollector = new ConstraintCollector(writtenFieldsCollector.writtenFields);
 		goal.accept(constraintCollector, null);
 		List<EqualityRelationship> solution = solver.solve(goal, constraintCollector.constraints);
+
+		Assert.assertTrue("res[x * 2, L27, L20] = [10, 10] is missing.",
+				solution.stream().anyMatch(r -> {
+					if (r.left instanceof VariableRes)
+					{
+						VariableRes vRes = (VariableRes) r.left;
+						if (vRes.getInput().startsWith("x * 2@") && vRes.getCallSite().getLine() == 20)
+						{
+							LiteralInterval value = (LiteralInterval) r.right;
+							return value.lowerBound == 10 && value.upperBound == 10;
+						}
+					}
+					return false;
+				}));
 
 		Assert.assertTrue("res[(x * 2) - 5, L27, L20] = [-5, -5] is missing.",
 				solution.stream().anyMatch(r -> {
