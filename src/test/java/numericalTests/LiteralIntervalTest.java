@@ -1,5 +1,4 @@
 import baseVisitors.AllocationVisitor;
-import math.Literal;
 import numericalAnalysis.*;
 import org.junit.Assert;
 import org.junit.Test;
@@ -11,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.Optional;
 
 public class LiteralIntervalTest
 {
@@ -31,13 +31,18 @@ public class LiteralIntervalTest
 	@Test
 	public void testIntervalMultiply()
 	{
-		LiteralInterval i = (LiteralInterval) MultiplyInterval.multiply(new LiteralInterval(0, 0), new LiteralInterval(2, 2));
-		Assert.assertEquals(0, i.lowerBound);
-		Assert.assertEquals(0, i.upperBound);
+		assertMultiply(new LiteralInterval(0), new LiteralInterval(2),new LiteralInterval(0));
 
-		i = (LiteralInterval) MultiplyInterval.multiply(new LiteralInterval(5, 5), new LiteralInterval(2, 2));
-		Assert.assertEquals(10, i.lowerBound);
-		Assert.assertEquals(10, i.upperBound);
+		assertMultiply(new LiteralInterval(5), new LiteralInterval(2), new LiteralInterval(10));
+
+		assertMultiply(new LiteralInterval(1), new LiteralInterval(-1), new LiteralInterval(-1));
+	}
+
+	private void assertMultiply(LiteralInterval a, LiteralInterval b, LiteralInterval expected)
+	{
+		LiteralInterval i;
+		i = (LiteralInterval) MultiplyInterval.multiply(a, b);
+		Assert.assertEquals(String.format("Value of %s (*) %s is incorrect.", a, b), expected, i);
 	}
 
 	@Test
@@ -99,32 +104,53 @@ public class LiteralIntervalTest
 		goal.accept(constraintCollector, null);
 		List<EqualityRelationship> solution = solver.solve(goal, constraintCollector.constraints);
 
-		Assert.assertTrue("res[x * 2, L27, L20] = [10, 10] is missing.",
-				solution.stream().anyMatch(r -> {
-					if (r.left instanceof VariableRes)
-					{
-						VariableRes vRes = (VariableRes) r.left;
-						if (vRes.getInput().startsWith("x * 2@") && vRes.getCallSite().getLine() == 20)
-						{
-							LiteralInterval value = (LiteralInterval) r.right;
-							return value.lowerBound == 10 && value.upperBound == 10;
-						}
-					}
-					return false;
-				}));
-
-		Assert.assertTrue("res[(x * 2) - 5, L27, L20] = [-5, -5] is missing.",
-				solution.stream().anyMatch(r -> {
-					if (r.left instanceof VariableRes)
-					{
-						VariableRes vRes = (VariableRes) r.left;
-						if (vRes.getInput().startsWith("(x * 2) - 5@") && vRes.getCallSite().getLine() == 20)
-						{
-							LiteralInterval value = (LiteralInterval) r.right;
-							return value.lowerBound == 5 && value.upperBound == 5;
-						}
-					}
-					return false;
-				}));
+		Helper.assertVariableRes(solution,"x * 2",27,20,new LiteralInterval(10));
+		Helper.assertVariableRes(solution,"(x * 2) - 5",27,20,new LiteralInterval(5));
 	}
+
+
+	@Test
+	public void test() throws FileNotFoundException, ParseException
+	{
+		FileInputStream stream = new FileInputStream("testcases/hw3/Pair3.java");
+		try {MiniJavaParser.ReInit(stream);} catch (Throwable e) {new MiniJavaParser(stream);}
+		Goal goal = MiniJavaParser.Goal();
+
+		ProgramStructureCollector.init(goal);
+		ClassHierarchyAnalysis.init(goal);
+		//Initialize AllocationVisitor.usedClasses so that we can skip analyzing ununsed classes.
+		goal.accept(new AllocationVisitor());
+
+		Solver solver = new Solver();
+		solver.debugOut = new PrintStream(OutputStream.nullOutputStream());
+
+		WrittenFieldsCollector writtenFieldsCollector = new WrittenFieldsCollector();
+		writtenFieldsCollector.visit(goal, null);
+
+		ConstraintCollector constraintCollector = new ConstraintCollector(writtenFieldsCollector.writtenFields);
+		goal.accept(constraintCollector, null);
+		List<EqualityRelationship> solution = solver.solve(goal, constraintCollector.constraints);
+
+		Helper.assertVariableRes(solution,"c * b",25,8,new LiteralInterval(-1));
+		Helper.assertVariableRes(solution, "c", 26, 8, new LiteralInterval(-1));
+
+		Helper.assertVariableRes(solution, "a + c", 26, 8, new LiteralInterval(0));
+		Optional<EqualityRelationship> match;
+
+		match = solution.stream().filter(r -> {
+			if (r.left instanceof VariableOut)
+			{
+				VariableOut vOut = (VariableOut) r.left;
+				return (vOut.getInput().getIdentifier().equals("d") && vOut.getStatement().getLine() == 26 && vOut.getCallSite().getLine() == 8);
+			}
+			return false;
+		}).findAny();
+		Assert.assertTrue("out[A.A.d, L26, L8] is not in solution.", match.isPresent());
+		Assert.assertEquals("Value of out[A.A.d, L26, L8] is incorrect.", new LiteralInterval(0, 0), match.get().right);
+
+
+		Helper.assertVariableRes(solution, "ret + d", 30, 8, new LiteralInterval(-1));
+
+	}
+
 }
