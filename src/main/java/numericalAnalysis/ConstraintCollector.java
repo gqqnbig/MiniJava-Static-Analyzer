@@ -216,7 +216,10 @@ public class ConstraintCollector extends VoidScopeVisitor<VariableAuxiliaryData>
 		Location callSite = new Location(n.f2);
 		for (String type : types)
 		{
-			u.getInput().add(new VariableRes(ProgramStructureCollector.getReturnExpression(type, methodName), ProgramStructureCollector.getLastStatement(type, methodName), callSite));
+			//the method may be inherited from parent.
+			Expression returnExpression = ProgramStructureCollector.getReturnExpression(type, methodName);
+			if (returnExpression != null)
+				u.getInput().add(new VariableRes(returnExpression, ProgramStructureCollector.getLastStatement(type, methodName), callSite));
 		}
 		constraints.add(new EqualityRelationship(new VariableRes(n, argu.statement, argu.callSite), u, "C11"));
 
